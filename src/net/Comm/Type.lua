@@ -23,4 +23,11 @@ export type PropertyClass<T> = {
     Changed:RBXScriptSignal
 }
 
+export type FunctionClass = {
+    _instance:RemoteFunction,
+
+    Invoke:(self:FunctionClass, ...any) -> any,
+    SetInvokeFunction:(self:FunctionClass, fn:(player:Player, ...any)->any) -> nil,
+}
+
 return nil

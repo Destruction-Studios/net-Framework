@@ -22,6 +22,10 @@ function Controller:_start()
     end
     onChanged(ServerService.AmountOfPlayers:Get())
     ServerService.AmountOfPlayers.Changed:Connect(onChanged)
+
+    ServerService.GiveRandomNumber:Invoke():andThen(function(value)
+        print("Got: ", value)
+    end)
 end
 
 

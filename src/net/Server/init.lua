@@ -89,8 +89,11 @@ function NetServer:Service(service)
                 newNetwork[name] = Comm.RemoteEvent.new(createInstance(parentFolder, name, "RemoteEvent"))
             elseif networkType == Network.UNRELIABLE_EVENT then
                 newNetwork[name] = Comm.RemoteEvent.new(createInstance(parentFolder, name, "UnreliableRemoteEvent"))
-            elseif networkType == Network.FUNCTION then
-                createInstance(parentFolder, name, "RemoteFunction")
+            elseif typeof(networkType) == "table" and networkType[1] == Network.FUNCTION then
+                local comm = Comm.Function.new(createInstance(parentFolder, name, "RemoteFunction"))
+                comm:SetInvokeFunction(networkType[2])
+                
+                newNetwork[name] = comm
             elseif typeof(networkType) == "table" and networkType[1] == Network.PROPERTY then
                 local initValue = networkType[2]
                 if valueObjectTypes[typeof(initValue)] == nil then
