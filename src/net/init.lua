@@ -8,12 +8,10 @@ export type Net = {
 
 local Net:Net = {}
 
-Net.Network = require(script.Network)
-
-if RunService:IsClient() then
-    Net.Controller = require(script.Client)
+if RunService:IsServer() then
+    return require(script.Server)
 else
-    Net.Service = require(script.Server)
+    return require(script.Client)
 end
 
 return Net
