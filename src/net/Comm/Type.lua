@@ -7,6 +7,8 @@ export type RemoteEventClass = {
     FireExcept:(self:RemoteEventClass, except:Player, ...any) -> nil,
     FireFilter:(self:RemoteEventClass, predicate:(player:Player) -> boolean, ...any) -> nil,
 
+    Fire:(self:RemoteEventClass, ...any) -> nil,
+
     ClientEvent:RBXScriptSignal,
     ServerEvent:RBXScriptSignal,
 }

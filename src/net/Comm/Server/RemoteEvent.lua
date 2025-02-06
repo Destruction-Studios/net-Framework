@@ -13,6 +13,7 @@ function RemoteEventServer.new(object:RemoteEvent|UnreliableRemoteEvent):RemoteE
     local self = {}
 
     self._instance = object
+    self.ServerEvent = object.OnServerEvent
 
     setmetatable(self, RemoteEventServerMT)
 

@@ -20,6 +20,11 @@ function Service1:_start()
     local MathService = Net:GetService("MathService")
     print("Added 6, 7", MathService:Add(6, 7))
     print("Starting Test Service with network: ", self.Network)
+
+    while true do
+        self.Network.Event:FireAll(math.random(1, 100))
+        task.wait(1)
+    end
 end
 
 local Service2 = Net:Service {

@@ -31,6 +31,14 @@ function NetClient:GetController(controllerName:string)
     return modulePool:GetModule(controllerName)
 end
 
+function NetClient:GetService(serviceName:string)
+    assert(modulePool:HasStartBeenCalled(), `Net must be started to access server Services`)
+    assert(typeof(serviceName) == "string", `Net Service name must be of type 'string' got {typeof(serviceName)}`)
+    assert(Network.Services[serviceName], `Net Service '{serviceName}' does not exist on client`)
+    
+    return Network.Services[serviceName]
+end
+
 function NetClient:StartAll()
     Network:Start()
     return modulePool:StartAll()

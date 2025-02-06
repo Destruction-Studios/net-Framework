@@ -1,9 +1,10 @@
 
 local Promise = require(script.Parent.Parent.Parent.Promise)
+local Comm = require(script.Parent.Parent.Comm)
 
 local Network = {}
 
-local services = {}
+Network.Services = {}
 
 local function waitForChildToExist(parent, childName)
     return Promise.new(function(resolve)
@@ -25,18 +26,16 @@ local function buildService(folder:Folder)
             continue
         end
         if v:IsA("RemoteEvent") or v:IsA("UnreliableRemoteEvent") then
-            newService[v.Name] = (v :: RemoteEvent).OnClientEvent
+            newService[v.Name] = Comm.RemoteEvent.new(v)
         elseif v.ClassName:find("Value") then
             
         end
     end
 
-    table.freeze(newService)
-    services[newService.Name] = newService
-end
+    print("Built client service:", newService)
 
-function Network:GetService(serviceName:string)
-    
+    table.freeze(newService)
+    Network.Services[newService.Name] = newService
 end
 
 function Network:Start()
