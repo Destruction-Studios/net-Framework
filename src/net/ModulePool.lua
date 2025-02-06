@@ -10,10 +10,17 @@ function ModulePool.new()
     local self = {}
 
     self._pool = {}
+    self._moduleType = "Unknown"
+    self._hasStartBeenCalled = false
+    self._initialized = false
     self._started = false
-    self._info = {Loaded = 0, Failed = 0}
+    self._info = {Complete = 0, Failed = 0}
 
     return setmetatable(self, ModulePoolMT)
+end
+
+function ModulePoolMT:SetModuleType(moduleType:string)
+    self._moduleType = moduleType
 end
 
 function ModulePoolMT:AddToPool(name, tbl)
@@ -32,33 +39,46 @@ function ModulePoolMT:GetPool()
     return self._pool
 end
 
-function ModulePoolMT:IsStarted()
+function ModulePoolMT:HasStartBeenCalled()
+    return self._hasStartBeenCalled
+end
+
+function ModulePoolMT:HasStarted()
     return self._started
+end
+
+function ModulePoolMT:HasInitialized()
+    return self._initialized
 end
 
 function ModulePoolMT:_runInitFunc()
     return Promise.new(function(resolve, reject)
-        if self:IsStarted() then
+        if self:HasStartBeenCalled() then
             reject("Net is already started")
         end
+        self._hasStartBeenCalled = true
 
         local initFunctions = {}
         for _, v in self:GetPool() do
             if typeof(v._init) == "function" then
-                table.insert(initFunctions, Promise.new(function(resolve)
+                table.insert(initFunctions, Promise.new(function(r)
                     v:_init()
-                    print("Initializing ", v)
-                    resolve()
+                    r()
+                end):catch(function(err)
+                    warn(`\n\nError initializing Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
                 end)) 
             end
         end
+
+        self._initialized = true
         
         resolve(Promise.all(initFunctions))
     end):andThen(function()
         for _, v in self:GetPool() do
             if typeof(v._start) == "function" then
-                print("STARTING ", v)
-                Promise.try(v._start, v)
+                Promise.try(v._start, v):catch(function(err)
+                    warn(`\n\nError starting Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
+                end)
             end
         end
         

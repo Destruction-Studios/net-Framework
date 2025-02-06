@@ -10,10 +10,10 @@ local modulePool = ModulePool.new()
 local networkFolder:Folder = nil
 
 local folderNames = {
-    [Network.UNRELIABLE_SIGNAL] = "_signals",
-    [Network.SIGNAL] = "_signals",
-    [Network.FUNCTION] = "_functions",
-    [Network.PROPERTY] = "_properties"
+    [Network.UNRELIABLE_EVENT] = "Events",
+    [Network.EVENT] = "Events",
+    [Network.FUNCTION] = "Functions",
+    [Network.PROPERTY] = "Properties"
 }
 
 local valueObjectTypes = {
@@ -55,8 +55,18 @@ local function getDictLen(dict)
     return result
 end
 
-function NetServer.Service(service)
-    assert(not modulePool:IsStarted(), "Net Services can not be added after Net start")
+function NetServer:GetService(serviceName:string)
+    if modulePool:HasStartBeenCalled() == true and modulePool:HasInitialized() == false then
+        error(`Net:GetService() can not be called during _init functions`)
+    end
+    assert(typeof(serviceName) == "string", `Service name must be 'string' got {typeof(serviceName)}`)
+    assert(modulePool:HasModule(serviceName), `Net Service '{serviceName}' does not exist`)
+
+    return modulePool:GetModule(serviceName)
+end
+
+function NetServer:Service(service)
+    assert(not modulePool:HasStartBeenCalled(), "Net Services can not be added after Net start")
     assert(typeof(service) == "table", `Service must be of type 'table' got {typeof(service)}`)
     assert(service.Name, "Service name can not be nil")
     assert(not modulePool:HasModule(service.Name), `Service '{service.Name}' already exists`)
@@ -74,9 +84,9 @@ function NetServer.Service(service)
             local key = typeof(networkType) == "table" and networkType[1] or networkType
             local parentFolder = getOrCreateFolder(serviceNetworkFolder, folderNames[key])
             
-            if networkType == Network.SIGNAL then
+            if networkType == Network.EVENT then
                 createInstance(parentFolder, name, "RemoteEvent")
-            elseif networkType == Network.UNRELIABLE_SIGNAL then
+            elseif networkType == Network.UNRELIABLE_EVENT then
                 createInstance(parentFolder, name, "UnreliableRemoteEvent")
             elseif networkType == Network.FUNCTION then
                 createInstance(parentFolder, name, "RemoteFunction")
@@ -104,5 +114,6 @@ function NetServer:StartNet()
 end
 
 createNetworkFolder()
+modulePool:SetModuleType("Service")
 
 return NetServer
