@@ -32,12 +32,12 @@ export type Network = {
 }
 
 export type Net = {
-    Controller:(controller:ControllerInfo) -> Controller,
-    Service:(service:ServiceInfo) -> Service,
+    Controller:(self:Net, controller:ControllerInfo) -> Controller,
+    Service:(self:Net, service:ServiceInfo) -> Service,
     Network:Network,
 
-    GetService:(serviceName:string) -> Service,
-    GetController:(ServiceInfo:string) -> Controller,
+    GetService:(self:Net, serviceName:string) -> Service,
+    GetController:(self:Net, ServiceInfo:string) -> Controller,
 
     StartAll:(self:Net) -> PromiseLike,
 }
