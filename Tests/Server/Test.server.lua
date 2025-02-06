@@ -19,7 +19,7 @@ end
 function Service1:_start()
     local MathService = Net:GetService("MathService")
     print("Added 6, 7", MathService:Add(6, 7))
-    print("Starting Test Service")
+    print("Starting Test Service with network: ", self.Network)
 end
 
 local Service2 = Net:Service {

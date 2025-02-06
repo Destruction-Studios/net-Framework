@@ -32,6 +32,7 @@ function NetClient:GetController(controllerName:string)
 end
 
 function NetClient:StartAll()
+    Network:Start()
     return modulePool:StartAll()
 end
 
