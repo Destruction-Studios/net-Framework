@@ -7,7 +7,7 @@ local RemoteEventClient = {}
 local RemoteEventClientMT = {}
 RemoteEventClientMT.__index = RemoteEventClientMT
 
-function RemoteEventClient.new(object)
+function RemoteEventClient.new(object): RemoteEventClass
     local self = {}
 
     self._instance = object

@@ -9,7 +9,7 @@ local RemoteEventServer = {}
 local RemoteEventServerMT = {}
 RemoteEventServerMT.__index = RemoteEventServerMT
 
-function RemoteEventServer.new(object:RemoteEvent|UnreliableRemoteEvent):RemoteEventClass
+function RemoteEventServer.new(object:RemoteEvent|UnreliableRemoteEvent): RemoteEventClass
     local self = {}
 
     self._instance = object

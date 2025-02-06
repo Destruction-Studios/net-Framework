@@ -2,13 +2,13 @@
 local Type = require(script.Parent.Parent.Type)
 local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
 
-type FunctionServerClass = Type.FunctionClass
+type FunctionClass = Type.FunctionClass
 
 local FunctionClient = {}
 local FunctionClientMT = {}
 FunctionClientMT.__index = FunctionClientMT
 
-function FunctionClient.new(object:RemoteFunction)
+function FunctionClient.new(object:RemoteFunction): FunctionClass
     local self = {}
 
     self._instance = object
@@ -17,7 +17,7 @@ function FunctionClient.new(object:RemoteFunction)
     return self
 end
 
-function FunctionClientMT.Invoke(self:FunctionServerClass, args)
+function FunctionClientMT.Invoke(self:FunctionClass, args)
     return Promise.new(function(resolve, _reject, _onCancel)
         local result = self._instance:InvokeServer(args)
 

@@ -7,7 +7,7 @@ local FunctionServer = {}
 local FunctionServerMT = {}
 FunctionServerMT.__index = FunctionServerMT
 
-function FunctionServer.new(object:RemoteFunction)
+function FunctionServer.new(object:RemoteFunction): FunctionClass
     local self = {}
 
     self._instance = object
