@@ -3,11 +3,16 @@
 registry = "test"
 
 [[package]]
+name = "destruction-studios/net-framework"
+version = "0.0.6"
+dependencies = [["Promise", "evaera/promise@4.0.0"], ["Symbol", "sleitnick/symbol@2.0.1"]]
+
+[[package]]
 name = "evaera/promise"
 version = "4.0.0"
 dependencies = []
 
 [[package]]
-name = "russe/net-framework"
-version = "0.1.0"
-dependencies = [["Promise", "evaera/promise@4.0.0"]]
+name = "sleitnick/symbol"
+version = "2.0.1"
+dependencies = []

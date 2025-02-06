@@ -1,0 +1,26 @@
+{
+    "name": "net-framework",
+    "tree":{
+        "$className": "DataModel",
+
+        "ReplicatedStorage": {
+            "Net": {
+                "$path":"."
+            }
+        },
+
+        "ServerScriptService": {
+            "Server" : {
+                "$path":"tests/Server"
+            }
+        },
+        
+        "StarterPlayer": {
+            "StarterPlayerScripts":{
+                "Client": {
+                    "$path":"Tests/client"
+                }
+            }
+        }
+    }
+}

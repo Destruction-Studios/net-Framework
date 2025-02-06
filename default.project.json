@@ -1,30 +1,6 @@
 {
-  "name": "net-Framework",
+  "name": "Packages",
   "tree": {
-    "$className": "DataModel",
-
-    "ReplicatedStorage": {
-      "Packages": {
-        "$path": "Packages"
-      },
-
-      "Shared": {
-        "$path": "src/ReplicatedStorage"
-      }
-    },
-
-    "ServerScriptService": {
-      "Server": {
-        "$path": "src/ServerScriptService"
-      }
-    },
-
-    "StarterPlayer": {
-      "StarterPlayerScripts": {
-        "Client": {
-          "$path": "src/StarterPlayerScripts"
-        }
-      }
-    }
+    "$path":"src/net"
   }
 }
