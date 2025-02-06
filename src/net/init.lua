@@ -48,7 +48,7 @@ export type NetworkEvent = Type.RemoteEventClass
 export type NetworkProperty = Type.PropertyClass
 
 if RunService:IsServer() then
-    return require(script.Server)
+    return require(script.Server) :: Net
 else
-    return require(script.Client)
+    return require(script.Client) :: Net
 end

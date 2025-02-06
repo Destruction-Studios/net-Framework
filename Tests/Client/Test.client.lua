@@ -28,7 +28,6 @@ function Controller:_start()
     end)
 end
 
-
 Net:StartAll():andThen(function()
     print("Net Client Started")
 end)
