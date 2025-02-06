@@ -39,7 +39,7 @@ function NetClient:GetService(serviceName:string)
     return Network.Services[serviceName]
 end
 
-function NetClient:StartAll()
+function NetClient:StartNet()
     Network:Start()
     return modulePool:StartAll()
 end

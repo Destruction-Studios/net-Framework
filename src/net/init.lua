@@ -39,7 +39,7 @@ export type Net = {
     GetService:(self:Net, serviceName:string) -> Service,
     GetController:(self:Net, ServiceInfo:string) -> Controller,
 
-    StartAll:(self:Net) -> PromiseLike,
+    StartNet:(self:Net) -> PromiseLike,
 }
 
 local Type = require(script.Comm.Type)
