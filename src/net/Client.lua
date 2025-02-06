@@ -1,5 +1,0 @@
-
-local NetClient = {}
-
-
-return NetClient
