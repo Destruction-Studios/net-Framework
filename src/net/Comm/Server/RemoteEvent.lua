@@ -24,35 +24,35 @@ function RemoteEventServerMT.GetInstance(self:RemoteEventClass):RemoteEvent
     return self._instance
 end
 
-function RemoteEventServerMT.FireAll(self:RemoteEventClass, args)
-    self._instance:FireAllClients(args)
+function RemoteEventServerMT.FireAll(self:RemoteEventClass, ...)
+    self._instance:FireAllClients(...)
 end
 
-function RemoteEventServerMT.FireTo(self:RemoteEventClass, player, args)
-    self._instance:FireClient(player, args)
+function RemoteEventServerMT.FireTo(self:RemoteEventClass, player, ...)
+    self._instance:FireClient(player, ...)
 end
 
-function RemoteEventServerMT.FireFor(self:RemoteEventClass, players, args)
+function RemoteEventServerMT.FireFor(self:RemoteEventClass, players, ...)
     for _, plr in players do
-        self:FireTo(plr, args)
+        self:FireTo(plr, ...)
     end
 end
 
-function RemoteEventServerMT.FireFilter(self:RemoteEventClass, predicate:()->boolean, args)
+function RemoteEventServerMT.FireFilter(self:RemoteEventClass, predicate:()->boolean, ...)
     for _, plr in Players:GetPlayers() do
         local result = noYield(predicate, plr)
         if result == true then
-            self:FireTo(plr, args)
+            self:FireTo(plr, ...)
         end
     end
 end
 
-function RemoteEventServerMT.FireExcept(self:RemoteEventClass, except, args)
+function RemoteEventServerMT.FireExcept(self:RemoteEventClass, except, ...)
     for _, plr in Players:GetPlayers() do
         if plr == except then
             continue
         end
-        self:FireTo(plr, args)
+        self:FireTo(plr, ...)
     end
 end
 

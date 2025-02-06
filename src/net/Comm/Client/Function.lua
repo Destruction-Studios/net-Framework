@@ -17,9 +17,10 @@ function FunctionClient.new(object:RemoteFunction): FunctionClass
     return self
 end
 
-function FunctionClientMT.Invoke(self:FunctionClass, args)
+function FunctionClientMT.Invoke(self:FunctionClass, ...)
+    local packed = table.pack(...)
     return Promise.new(function(resolve, _reject, _onCancel)
-        local result = self._instance:InvokeServer(args)
+        local result = self._instance:InvokeServer(table.unpack(packed))
 
         resolve(result)
     end)

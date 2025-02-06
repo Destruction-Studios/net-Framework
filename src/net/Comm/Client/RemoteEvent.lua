@@ -17,8 +17,8 @@ function RemoteEventClient.new(object): RemoteEventClass
     return self
 end
 
-function RemoteEventClientMT.Fire(self:RemoteEventClass, args)
-    self._instance:FireServer(args)
+function RemoteEventClientMT.Fire(self:RemoteEventClass, ...)
+    self._instance:FireServer(...)
 end
 
 return RemoteEventClient
