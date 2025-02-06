@@ -1,23 +1,23 @@
 
 local Type = require(script.Parent.Parent.Type)
 
-local PropertyServer = {}
-local ProperyServerMT = {}
-ProperyServerMT.__index = ProperyServerMT
+local PropertyClient = {}
+local PropertyClientMT = {}
+PropertyClientMT.__index = PropertyClientMT
 
-function PropertyServer.new<T>(object:NumberValue): Type.PropertyClass<T>
+function PropertyClient.new<T>(object:NumberValue): Type.PropertyClass<T>
     local self = {}
 
     self._instance = object
     self.Changed = object.Changed
     
-    setmetatable(self, ProperyServerMT)
+    setmetatable(self, PropertyClientMT)
 
     return self
 end
 
-function ProperyServerMT.Get<T>(self:Type.PropertyClass<T>): T
+function PropertyClientMT.Get<T>(self:Type.PropertyClass<T>): T
     return self._instance.Value
 end
 
-return PropertyServer
+return PropertyClient
