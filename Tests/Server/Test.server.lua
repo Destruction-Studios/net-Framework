@@ -32,5 +32,5 @@ function Service2:Add(num1, num2)
 end
 
 Net:StartNet():andThen(function()
-    print("Net Started!")
+    print("Net Server Started!")
 end)

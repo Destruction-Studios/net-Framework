@@ -107,7 +107,6 @@ function NetServer:Service(service)
 end
 
 function NetServer:StartNet()
-    print(modulePool:GetPool())
     return modulePool:StartAll():andThen(function()
         networkFolder.Parent = script.Parent
     end)
