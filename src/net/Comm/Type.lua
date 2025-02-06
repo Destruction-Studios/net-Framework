@@ -13,5 +13,14 @@ export type RemoteEventClass = {
     ServerEvent:RBXScriptSignal,
 }
 
+export type PropertyClass<T> = {
+    _instance:StringValue,
+
+    Get:(self:PropertyClass<T>) -> T,
+
+    Set:(self:PropertyClass<T>) -> T,
+
+    Changed:RBXScriptSignal
+}
 
 return nil

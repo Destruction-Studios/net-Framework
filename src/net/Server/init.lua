@@ -98,6 +98,8 @@ function NetServer:Service(service)
                 end
                 local inst = createInstance(parentFolder, name, valueObjectTypes[typeof(initValue)])
                 inst.Value = initValue
+                
+                newNetwork[name] = Comm.Property.new(inst)
             end
         end
     end

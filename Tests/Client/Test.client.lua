@@ -13,9 +13,15 @@ function Controller:_start()
     print("Controller start")
     local ServerService = Net:GetService("TestService")
 
-    ServerService.Event.ClientEvent:Connect(function(randNum)
+    ServerService.RandomNumber.ClientEvent:Connect(function(randNum)
         print("GOT RAND NUM!, ", randNum)
     end)
+    
+    local function onChanged(value)
+        print("Players: ", value)
+    end
+    onChanged(ServerService.AmountOfPlayers:Get())
+    ServerService.AmountOfPlayers.Changed:Connect(onChanged)
 end
 
 
