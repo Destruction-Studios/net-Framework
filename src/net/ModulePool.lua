@@ -6,7 +6,6 @@ local ModulePoolMT = {}
 ModulePoolMT.__index = ModulePoolMT
 
 function ModulePool.new()
-    print("New")
     local self = {}
 
     self._pool = {}

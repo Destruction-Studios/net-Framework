@@ -16,8 +16,6 @@ local function waitForChildToExist(parent, childName)
 end
 
 local function buildService(folder:Folder)
-    print("Building Client Service ", folder.Name)
-
     local newService = {}
     newService.Name = folder.Name
 
@@ -33,8 +31,6 @@ local function buildService(folder:Folder)
             newService[v.Name] = Comm.Property.new(v)
         end
     end
-
-    print("Built client service:", newService)
 
     table.freeze(newService)
     Network.Services[newService.Name] = newService
