@@ -11,18 +11,19 @@ end
 
 function Controller:_start()
     print("Controller start")
-    local MC = Net:GetController("MathController")
-    print("Added 12, 56 ", MC:Add(12, 56))
+    local ServerService = Net:GetService("TestService")
+
+    ServerService.RandomNumber.ClientEvent:Connect(function(randNum)
+        print("GOT RAND NUM!, ", randNum)
+    end)
+    
+    local function onChanged(value)
+        print("Players: ", value)
+    end
+    onChanged(ServerService.AmountOfPlayers:Get())
+    ServerService.AmountOfPlayers.Changed:Connect(onChanged)
 end
 
-local MathController = Net:Controller {
-    Name = "MathController"
-}
-
-function MathController:Add(a, b)
-    print(`{a} + {b} = {a + b}`)
-    return a+b
-end
 
 Net:StartAll():andThen(function()
     print("Net Client Started")

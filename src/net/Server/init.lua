@@ -1,5 +1,6 @@
 
 local ModulePool = require(script.Parent.ModulePool)
+local Comm = require(script.Parent.Comm)
 
 local NetServer = {}
 local Network = require(script.Network)
@@ -71,23 +72,23 @@ function NetServer:Service(service)
     assert(service.Name, "Service name can not be nil")
     assert(not modulePool:HasModule(service.Name), `Service '{service.Name}' already exists`)
     
+    local oldNetwork = service.Network or {}
+    local newNetwork = {}
     local newService = service
 
-    newService.Network = newService.Network or {}
-
-    if getDictLen(newService.Network) > 0 then
+    if getDictLen(oldNetwork) > 0 then
         local serviceNetworkFolder = Instance.new("Folder")
         serviceNetworkFolder.Name = newService.Name
         serviceNetworkFolder.Parent = networkFolder
 
-        for name, networkType in newService.Network do
+        for name, networkType in oldNetwork do
             local key = typeof(networkType) == "table" and networkType[1] or networkType
             local parentFolder = getOrCreateFolder(serviceNetworkFolder, folderNames[key])
             
             if networkType == Network.EVENT then
-                createInstance(parentFolder, name, "RemoteEvent")
+                newNetwork[name] = Comm.RemoteEvent.new(createInstance(parentFolder, name, "RemoteEvent"))
             elseif networkType == Network.UNRELIABLE_EVENT then
-                createInstance(parentFolder, name, "UnreliableRemoteEvent")
+                newNetwork[name] = Comm.RemoteEvent.new(createInstance(parentFolder, name, "UnreliableRemoteEvent"))
             elseif networkType == Network.FUNCTION then
                 createInstance(parentFolder, name, "RemoteFunction")
             elseif typeof(networkType) == "table" and networkType[1] == Network.PROPERTY then
@@ -97,9 +98,13 @@ function NetServer:Service(service)
                 end
                 local inst = createInstance(parentFolder, name, valueObjectTypes[typeof(initValue)])
                 inst.Value = initValue
+                
+                newNetwork[name] = Comm.Property.new(inst)
             end
         end
     end
+
+    newService.Network = newNetwork
 
     modulePool:AddToPool(newService.Name, newService)
 

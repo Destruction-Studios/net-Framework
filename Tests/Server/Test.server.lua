@@ -5,10 +5,8 @@ local Net = require(ReplicatedStorage.Net)
 local Service1 = Net:Service {
     Name = "TestService",
     Network = {
-        Event = Net.Network.Event(),
-        UnRel = Net.Network.Event(true),
-        Func = Net.Network.Function(),
-        BoolProp = Net.Network.Property(true),
+        RandomNumber = Net.Network.Event(),
+        AmountOfPlayers = Net.Network.Property(0)
     }
 }
 
@@ -19,7 +17,12 @@ end
 function Service1:_start()
     local MathService = Net:GetService("MathService")
     print("Added 6, 7", MathService:Add(6, 7))
-    print("Starting Test Service")
+    print("Starting Test Service with network: ", self.Network)
+
+    while true do
+        self.Network.AmountOfPlayers:Set(math.random(1, 5))
+        task.wait(1)
+    end
 end
 
 local Service2 = Net:Service {
