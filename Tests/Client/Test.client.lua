@@ -23,11 +23,18 @@ function Controller:_start()
     onChanged(ServerService.AmountOfPlayers:Get())
     ServerService.AmountOfPlayers.Changed:Connect(onChanged)
 
-    ServerService.GiveRandomNumber:Invoke():andThen(function(value)
-        print("Got: ", value)
+    local DictTable = ServerService.DictTable
+
+    DictTable:OnReady():await()
+
+    DictTable.KeyChanged:Connect(function(_newValue, k, v)
+        print(`Key {k} was changed to {v}`)
+    end)
+    DictTable.Changed:Connect(function(newValue)
+        print("New Value", newValue)
     end)
 end
 
-Net:StartAll():andThen(function()
+Net:StartNet():andThen(function()
     print("Net Client Started")
 end)

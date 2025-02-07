@@ -32,6 +32,7 @@ export type TablePropertyClass = {
     _value:{any},
     _isDict:boolean,
     _remote:RemoteEvent,
+    _ready:boolean,
 
     Get:(self:TablePropertyClass) -> any,
 

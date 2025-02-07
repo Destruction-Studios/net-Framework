@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 
 local Type = require(script.Parent.Parent.Type)
 
@@ -6,6 +7,8 @@ type TablePropertyClass = Type.TablePropertyClass
 local TableProperty = {}
 local TablePropertyMT = {}
 TablePropertyMT.__index = TablePropertyMT
+
+local properties:{[string]:TablePropertyClass} = {}
 
 local function isDict(tbl)
     local loopAmount = 0
@@ -20,6 +23,12 @@ local function isDict(tbl)
     return false
 end
 
+local function onPlayerAdded(player:Player)
+    for _, v in properties do
+        v._remote:FireClient(player, "Init", v._value)
+    end
+end
+
 function TableProperty.new(originalTable, location:Instance, name:string)
     local self = {}
 
@@ -27,12 +36,15 @@ function TableProperty.new(originalTable, location:Instance, name:string)
     self._value = originalTable
 
     self._remote = Instance.new("RemoteEvent")
+    self._remote:SetAttribute("_property", true)
     self._remote.Name = name
     self._remote.Parent = location
 
     self._remote:FireAllClients("Init", self._value)
     
     setmetatable(self, TablePropertyMT)
+
+    properties[self._remote.Name] = self
 
     return self
 end
@@ -43,7 +55,7 @@ end
 
 function TablePropertyMT.Insert<T>(self:TablePropertyClass, value:T): T
     if self._isDict then
-        warn(`{self._location.Name} is not an array`)
+        warn(`{self._remote.Name} is not an array`)
         return
     end
 
@@ -56,7 +68,7 @@ end
 
 function TablePropertyMT.Remove(self:TablePropertyClass, index:number?)
     if self._isDict then
-        warn(`{self._location.Name} is not an array`)
+        warn(`{self._remote.Name} is not an array`)
         return
     end
 
@@ -75,7 +87,7 @@ end
 
 function TablePropertyMT.Key<T>(self:TablePropertyClass, key:any, value:T): T
     if not self._isDict then
-        warn(`{self._location.Name} is not a dictionary`)
+        warn(`{self._remote.Name} is not a dictionary`)
         return
     end
 
@@ -85,5 +97,7 @@ function TablePropertyMT.Key<T>(self:TablePropertyClass, key:any, value:T): T
 
     return value
 end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
 
 return TableProperty

@@ -36,10 +36,10 @@ function Service1:_start()
         self.Network.DictTable:Key("SuperEpic", false)
     end)
 
-    while true do
-        self.Network.AmountOfPlayers:Set(math.random(1, 5))
-        task.wait(1)
-    end
+    -- while true do
+    --     self.Network.AmountOfPlayers:Set(math.random(1, 5))
+    --     task.wait(1)
+    -- end
 end
 
 Net:StartNet():andThen(function()
