@@ -1,5 +1,6 @@
 
 local Promise = require(script.Parent.Parent.Promise)
+local Flags = require(script.Parent.Flags)
 
 local ModulePool = {}
 local ModulePoolMT = {}
@@ -57,29 +58,40 @@ function ModulePoolMT:_runInitFunc()
         end
         self._hasStartBeenCalled = true
 
+        local netStartMS = DateTime.now().UnixTimestampMillis
+
         local initFunctions = {}
         for _, v in self:GetPool() do
             if typeof(v._init) == "function" then
                 table.insert(initFunctions, Promise.new(function(r)
+                    local start = DateTime.now().UnixTimestampMillis
                     v:_init()
+                    Flags.runIfFlag("debug", print, `Initialized Net {self._moduleType} '{v.Name}' ({DateTime.now().UnixTimestampMillis - start} milliseconds)`)
                     r()
                 end):catch(function(err)
-                    warn(`\n\nError initializing Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
+                    Flags.runIfNotFlag("silent", warn, `\n\nError initializing Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
                 end)) 
             end
         end
 
         self._initialized = true
         
-        resolve(Promise.all(initFunctions))
-    end):andThen(function()
+        Promise.all(initFunctions)
+        
+        resolve(netStartMS)
+    end):andThen(function(netStartMS)
         for _, v in self:GetPool() do
             if typeof(v._start) == "function" then
-                Promise.try(v._start, v):catch(function(err)
-                    warn(`\n\nError starting Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
+                local start = DateTime.now().UnixTimestampMillis
+                Promise.try(v._start, v):andThen(function()
+                    Flags.runIfFlag("debug", print, `Started Net {self._moduleType} '{v.Name}' ({DateTime.now().UnixTimestampMillis - start} milliseconds)`)
+                end):catch(function(err)
+                    Flags.runIfNotFlag("silent", warn, `\n\nError starting Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
                 end)
             end
         end
+
+        Flags.runIfFlag("debug", print, `Net Started ({DateTime.now().UnixTimestampMillis - netStartMS} milliseconds)`)
         
         self._started = true
     end)
