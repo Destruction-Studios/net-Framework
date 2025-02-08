@@ -1,6 +1,7 @@
 
 local ModulePool = require(script.Parent.ModulePool)
 local Comm = require(script.Parent.Comm)
+local Promise = require(script.Parent.Parent.Promise)
 
 local NetServer = {}
 local Network = require(script.Network)
@@ -11,8 +12,9 @@ NetServer.Flag = Flags
 
 local modulePool = ModulePool.new()
 local networkFolder:Folder = nil
+local onStartBindable = Instance.new("BindableEvent")
 
-local folderNames = {
+local FOLDER_NAMES = {
     [Network.UNRELIABLE_EVENT] = "Events",
     [Network.EVENT] = "Events",
     [Network.FUNCTION] = "Functions",
@@ -86,7 +88,7 @@ function NetServer:Service(service)
 
         for name, networkType in oldNetwork do
             local key = typeof(networkType) == "table" and networkType[1] or networkType
-            local parentFolder = getOrCreateFolder(serviceNetworkFolder, folderNames[key])
+            local parentFolder = getOrCreateFolder(serviceNetworkFolder, FOLDER_NAMES[key])
             
             if networkType == Network.EVENT then
                 newNetwork[name] = Comm.RemoteEvent.new(createInstance(parentFolder, name, "RemoteEvent"))
@@ -123,7 +125,16 @@ end
 function NetServer:StartNet()
     return modulePool:StartAll():andThen(function()
         networkFolder.Parent = script.Parent
+        onStartBindable:Fire()
+        task.defer(onStartBindable.Destroy, onStartBindable)
     end)
+end
+
+function NetServer:OnStart()
+    if modulePool:HasStarted() then
+        return Promise.resolve()
+    end
+    return Promise.fromEvent(onStartBindable.Event)
 end
 
 createNetworkFolder()

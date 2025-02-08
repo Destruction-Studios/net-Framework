@@ -46,6 +46,8 @@ export type Net = {
     GetService:(self:Net, serviceName:string) -> Service,
     GetController:(self:Net, ServiceInfo:string) -> Controller,
 
+    OnStart:(self:Net) -> PromiseLike,
+
     StartNet:(self:Net) -> PromiseLike,
 }
 

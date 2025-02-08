@@ -1,5 +1,6 @@
 
 local ModulePool = require(script.Parent.ModulePool)
+local Promise = require(script.Parent.Parent.Promise)
 
 local NetClient = {}
 local Network = require(script.Network)
@@ -10,6 +11,7 @@ NetClient.Flag = Flags
 
 local modulePool = ModulePool.new()
 modulePool:SetModuleType("Controller")
+local onStartBindable = Instance.new("BindableEvent")
 
 function NetClient:Controller(controller)
     assert(not modulePool:HasStartBeenCalled(), "Net Controllers can not be added after Net start")
@@ -45,6 +47,13 @@ end
 function NetClient:StartNet()
     Network:Start()
     return modulePool:StartAll()
+end
+
+function NetClient:OnStart()
+    if modulePool:HasStarted() then
+        return Promise.resolve()
+    end
+    return Promise.fromEvent(onStartBindable.Event)
 end
 
 return NetClient
