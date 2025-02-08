@@ -1,11 +1,10 @@
 ---@diagnostic disable: undefined-type
 local RunService = game:GetService("RunService")
 
+local Type = require(script.Comm.Type)
+
 type UniqueKey = {}
-type PromiseLike = {
-    andThen:(self:PromiseLike, ...any) -> PromiseLike,
-    catch:(self:PromiseLike, err:any) -> PromiseLike,
-}
+type PromiseLike = Type.PromiseLike
 
 export type ModuleInfo = {
     Name:string
@@ -41,8 +40,6 @@ export type Net = {
 
     StartNet:(self:Net) -> PromiseLike,
 }
-
-local Type = require(script.Comm.Type)
 
 export type NetworkEvent = Type.RemoteEventClass
 export type NetworkProperty = Type.PropertyClass

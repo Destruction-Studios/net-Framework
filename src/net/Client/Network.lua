@@ -24,7 +24,11 @@ local function buildService(folder:Folder)
             continue
         end
         if v:IsA("RemoteEvent") or v:IsA("UnreliableRemoteEvent") then
-            newService[v.Name] = Comm.RemoteEvent.new(v)
+            if v:GetAttribute("_property") == true then
+                newService[v.Name] = Comm.TableProperty.new(v)
+            else
+                newService[v.Name] = Comm.RemoteEvent.new(v)
+            end
         elseif v:IsA("RemoteFunction") then
             newService[v.Name] = Comm.Function.new(v)
         elseif v.ClassName:find("Value") then

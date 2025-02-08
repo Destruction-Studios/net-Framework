@@ -1,5 +1,6 @@
 return {
     RemoteEvent = require(script.RemoteEvent),
     Property = require(script.Property),
-    Function = require(script.Function)
+    TableProperty = require(script.TableProperty),
+    Function = require(script.Function),
 }

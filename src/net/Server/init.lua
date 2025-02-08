@@ -17,11 +17,12 @@ local folderNames = {
     [Network.PROPERTY] = "Properties"
 }
 
-local valueObjectTypes = {
+local VALUE_OBJECT_TYPES = {
     number = "NumberValue",
     boolean = "BoolValue",
     CFrame = "CFrameValue",
     Color3 = "Color3Value",
+    string = "StringValue",
 }
 
 local function createNetworkFolder()
@@ -96,13 +97,16 @@ function NetServer:Service(service)
                 newNetwork[name] = comm
             elseif typeof(networkType) == "table" and networkType[1] == Network.PROPERTY then
                 local initValue = networkType[2]
-                if valueObjectTypes[typeof(initValue)] == nil then
+                if typeof(initValue) == "table" then
+                    newNetwork[name] = Comm.TableProperty.new(initValue, parentFolder, name)
+                elseif VALUE_OBJECT_TYPES[typeof(initValue)] ~= nil then
+                    local inst = createInstance(parentFolder, name, VALUE_OBJECT_TYPES[typeof(initValue)])
+                    inst.Value = initValue
+                    
+                    newNetwork[name] = Comm.Property.new(inst)
+                else
                     error(`Can not create property with value type '{typeof(initValue)}'`, 2)
                 end
-                local inst = createInstance(parentFolder, name, valueObjectTypes[typeof(initValue)])
-                inst.Value = initValue
-                
-                newNetwork[name] = Comm.Property.new(inst)
             end
         end
     end

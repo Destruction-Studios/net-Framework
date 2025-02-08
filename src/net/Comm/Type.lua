@@ -1,3 +1,8 @@
+export type PromiseLike = {
+    andThen:(self:PromiseLike, ...any) -> PromiseLike,
+    catch:(self:PromiseLike, err:any) -> PromiseLike,
+}
+
 export type RemoteEventClass = {
     _instance:RemoteEvent,
 
@@ -21,6 +26,22 @@ export type PropertyClass<T> = {
     Set:(self:PropertyClass<T>) -> T,
 
     Changed:RBXScriptSignal
+}
+
+export type TablePropertyClass = {
+    _value:{any},
+    _isDict:boolean,
+    _remote:RemoteEvent,
+    _ready:boolean,
+
+    Get:(self:TablePropertyClass) -> any,
+
+    OnReady:(self:TablePropertyClass) -> PromiseLike,
+
+    Key:<T>(self:TablePropertyClass, key:string, value:T) -> T,
+    Insert:<T>(self:TablePropertyClass, value:T) -> T,
+    Find:(self:TablePropertyClass, value:any, init:number?) -> number?,
+    Remove:(self:TablePropertyClass, index:number?) -> any?,
 }
 
 export type FunctionClass = {
