@@ -4,8 +4,10 @@ local Comm = require(script.Parent.Comm)
 
 local NetServer = {}
 local Network = require(script.Network)
+local Flags = require(script.Parent.Flags)
 
 NetServer.Network = Network
+NetServer.Flag = Flags
 
 local modulePool = ModulePool.new()
 local networkFolder:Folder = nil

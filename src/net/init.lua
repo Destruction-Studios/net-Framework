@@ -29,11 +29,19 @@ export type Network = {
     Property:() -> UniqueKey,
     Function:() -> UniqueKey,
 }
+export type Flag = {
+    setFlag:(flagName:string, studio:boolean?, server:boolean?) -> nil,
+    isFlagEnabled:(flagName:string) -> boolean,
+    runIfFlag:<T>(flagName:string, fn:(...any)->T?, ...any) -> T?,
+    runIfNotFlag:<T>(flagName:string, fn:(...any)->T?, ...any) -> T?,
+}
 
 export type Net = {
     Controller:(self:Net, controller:ControllerInfo) -> Controller,
     Service:(self:Net, service:ServiceInfo) -> Service,
+
     Network:Network,
+    Flag:Flag,
 
     GetService:(self:Net, serviceName:string) -> Service,
     GetController:(self:Net, ServiceInfo:string) -> Controller,

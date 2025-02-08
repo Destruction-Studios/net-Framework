@@ -3,7 +3,10 @@ local ModulePool = require(script.Parent.ModulePool)
 
 local NetClient = {}
 local Network = require(script.Network)
+local Flags = require(script.Parent.Flags)
+
 NetClient.Network = Network
+NetClient.Flag = Flags
 
 local modulePool = ModulePool.new()
 modulePool:SetModuleType("Controller")
