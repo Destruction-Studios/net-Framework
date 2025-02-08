@@ -12,6 +12,7 @@ function FunctionClient.new(object:RemoteFunction): FunctionClass
     local self = {}
 
     self._instance = object
+    self.ClassName = "NetFunction"
 
     setmetatable(self, FunctionClientMT)
     return self

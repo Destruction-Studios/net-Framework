@@ -14,6 +14,7 @@ function RemoteEventServer.new(object:RemoteEvent|UnreliableRemoteEvent): Remote
 
     self._instance = object
     self.ServerEvent = object.OnServerEvent
+    self.ClassName = "NetEvent"
 
     setmetatable(self, RemoteEventServerMT)
 

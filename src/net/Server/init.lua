@@ -4,6 +4,8 @@ local Comm = require(script.Parent.Comm)
 local Promise = require(script.Parent.Parent.Promise)
 
 local NetServer = {}
+local NetServiceMT = {}
+NetServiceMT.__index = NetServiceMT
 local Network = require(script.Network)
 local Flags = require(script.Parent.Flags)
 
@@ -79,7 +81,7 @@ function NetServer:Service(service)
     
     local oldNetwork = service.Network or {}
     local newNetwork = {}
-    local newService = service
+    local newService = setmetatable(service, NetServiceMT)
 
     if getDictLen(oldNetwork) > 0 then
         local serviceNetworkFolder = Instance.new("Folder")
@@ -135,6 +137,42 @@ function NetServer:OnStart()
         return Promise.resolve()
     end
     return Promise.fromEvent(onStartBindable.Event)
+end
+
+function NetServiceMT:GetEvent(eventName:string)
+    local networkObject = self.Network[eventName]
+    if networkObject.ClassName ~= "NetEvent" then
+        error(`{eventName} is not a Net Event ({networkObject.ClassName})`)
+    end
+
+    return networkObject
+end
+
+function NetServiceMT:GetFunction(functionName:string)
+    local networkObject = self.Network[functionName]
+    if networkObject.ClassName ~= "NetFunction" then
+        error(`{functionName} is not a Net Function ({networkObject.ClassName})`)
+    end
+
+    return networkObject
+end
+
+function NetServiceMT:GetProperty(propertyName:string)
+    local networkObject = self.Network[propertyName]
+    if networkObject.ClassName ~= "NetProperty" then
+        error(`{propertyName} is not a Net Property ({networkObject.ClassName})`)
+    end
+
+    return networkObject
+end
+
+function NetServiceMT:GetTableProperty(propertyName:string)
+    local networkObject = self.Network[propertyName]
+    if networkObject.ClassName ~= "NetTableProperty" then
+        error(`{propertyName} is not a Net Table Property ({networkObject.ClassName})`)
+    end
+
+    return networkObject
 end
 
 createNetworkFolder()

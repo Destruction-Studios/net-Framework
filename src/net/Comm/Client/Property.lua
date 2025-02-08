@@ -10,6 +10,7 @@ function PropertyClient.new<T>(object:NumberValue): Type.PropertyClass<T>
 
     self._instance = object
     self.Changed = object.Changed
+    self.ClassName = "NetProperty"
     
     setmetatable(self, PropertyClientMT)
 

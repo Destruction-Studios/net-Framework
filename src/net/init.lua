@@ -6,23 +6,34 @@ local Type = require(script.Comm.Type)
 type UniqueKey = {}
 type PromiseLike = Type.PromiseLike
 
-export type ModuleInfo = {
+export type ControllerInfo = {
     Name:string
 }
-export type ControllerInfo = ModuleInfo
-export type ServiceInfo = ModuleInfo & {
-    Network: {[string]:any}
+
+export type ServiceInfo = {
+    Name:string,
+    Network:{},
 }
-export type ModuleBase = ModuleInfo & {
+
+export type Controller = {
     _init:(self:ModuleBase) -> nil,
     _start:(self:ModuleBase) -> nil,
-}
-export type Controller = ModuleBase & {
+
     Name:string,
 }
 export type Service = ModuleBase & {
     Name:string,
+
+    _init:(self:ModuleBase) -> nil,
+    _start:(self:ModuleBase) -> nil,
+
+    Name:string,
     Network: {[string]:any},
+
+    GetEvent:(self:Service, eventName:string) -> Type.RemoteEventClass,
+    GetProperty:(self:Service, propertyName:string) -> Type.PropertyClass,
+    GetTableProperty:(self:Service, propertyName:string) -> Type.TablePropertyClass,
+    GetFunction:(self:Service, functionName:string) -> Type.FunctionClass,
 }
 export type Network = {
     Event:(isUnreliable:boolean) -> UniqueKey,

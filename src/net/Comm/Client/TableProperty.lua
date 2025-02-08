@@ -31,6 +31,8 @@ function TableProperty.new(remoteEvent:RemoteEvent)
     self._ready = false
     self._readyBindable = Instance.new("BindableEvent")
 
+    self.ClassName = "NetTableProperty"
+
     self.Inserted = Signal.new()
     self.Removed = Signal.new()
     self.KeyChanged = Signal.new()

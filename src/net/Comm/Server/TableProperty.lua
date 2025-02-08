@@ -35,6 +35,8 @@ function TableProperty.new(originalTable, location:Instance, name:string)
     self._isDict = isDict(originalTable)
     self._value = originalTable
 
+    self.ClassName = "NetTableProperty"
+
     self._remote = Instance.new("RemoteEvent")
     self._remote:SetAttribute("_property", true)
     self._remote.Name = name

@@ -13,6 +13,8 @@ function FunctionServer.new(object:RemoteFunction): FunctionClass
     self._instance = object
     self._hasInvokeBeenSet = false
 
+    self.ClassName = "NetFunction"
+
     setmetatable(self, FunctionServerMT)
     return self
 end

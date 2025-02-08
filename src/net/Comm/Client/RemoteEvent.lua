@@ -12,6 +12,7 @@ function RemoteEventClient.new(object): RemoteEventClass
 
     self._instance = object
     self.ClientEvent = object.OnClientEvent
+    self.ClassName = "NetEvent"
 
     setmetatable(self, RemoteEventClientMT)
     return self
