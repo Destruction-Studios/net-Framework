@@ -29,10 +29,15 @@ local function onPlayerAdded(player:Player)
     end
 end
 
-function TableProperty.new(originalTable, location:Instance, name:string)
+function TableProperty.new(originalTable, location:Instance, name:string, override:string)
     local self = {}
 
-    self._isDict = isDict(originalTable)
+    local isDictOverride = nil
+    if override ~= nil then
+        isDictOverride = override == "Dictionary"
+    end
+
+    self._isDict = isDictOverride ~= nil and isDictOverride or isDict(originalTable)
     self._value = originalTable
 
     self.ClassName = "NetTableProperty"

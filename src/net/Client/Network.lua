@@ -18,7 +18,7 @@ local function waitForChildToExist(parent, childName)
 end
 
 local function buildService(folder:Folder)
-    local newService = {}
+    local newService = setmetatable({}, NetServiceMT)
     newService.Name = folder.Name
 
     for _, v in folder:GetDescendants() do

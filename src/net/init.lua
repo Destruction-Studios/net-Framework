@@ -37,7 +37,7 @@ export type Service = ModuleBase & {
 }
 export type Network = {
     Event:(isUnreliable:boolean) -> UniqueKey,
-    Property:() -> UniqueKey,
+    Property:(initValue:any, tableType: "Dictionary"|"Array"?) -> UniqueKey,
     Function:() -> UniqueKey,
 }
 export type Flag = {
