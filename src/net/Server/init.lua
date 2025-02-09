@@ -104,7 +104,7 @@ function NetServer:Service(service)
             elseif typeof(networkType) == "table" and networkType[1] == Network.PROPERTY then
                 local initValue = networkType[2]
                 if typeof(initValue) == "table" then
-                    newNetwork[name] = Comm.TableProperty.new(initValue, parentFolder, name)
+                    newNetwork[name] = Comm.TableProperty.new(initValue, parentFolder, name, networkType[3])
                 elseif VALUE_OBJECT_TYPES[typeof(initValue)] ~= nil then
                     local inst = createInstance(parentFolder, name, VALUE_OBJECT_TYPES[typeof(initValue)])
                     inst.Value = initValue

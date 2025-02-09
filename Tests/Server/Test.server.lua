@@ -20,7 +20,8 @@ local Service1 = Net:Service {
         },
         ArrayTable = Net.Network.Property{
             1, 324, 1000, 4252
-        }
+        },
+        OverrideTable = Net.Network.Property({}, "awjhhdvouhawd")
     }
 }
 

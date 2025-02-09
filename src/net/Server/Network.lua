@@ -16,8 +16,8 @@ function Network.Function(fn:(player:Player, ...any)->any)
     return {Network.FUNCTION, fn}
 end
 
-function Network.Property(initValue)
-    return {Network.PROPERTY, initValue}
+function Network.Property(...)
+    return {Network.PROPERTY, ...}
 end
 
 return Network
