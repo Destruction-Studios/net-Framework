@@ -34,6 +34,7 @@ function TableProperty.new(originalTable, location:Instance, name:string, overri
 
     local isDictOverride = nil
     if override ~= nil then
+        assert(override == "Dictionary" or override == "Array", `Invalid Net Table Override type expected Dictionary or Array got {override}`)
         isDictOverride = override == "Dictionary"
     end
 
