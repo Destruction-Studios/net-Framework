@@ -1,5 +1,5 @@
 {
-  "name": "net-framework",
+  "name": "net",
   "tree": {
     "$path":"src/net"
   }

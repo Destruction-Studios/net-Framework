@@ -3,6 +3,8 @@ local Promise = require(script.Parent.Parent.Parent.Promise)
 local Comm = require(script.Parent.Parent.Comm)
 
 local Network = {}
+local NetServiceMT = {}
+NetServiceMT.__index = NetServiceMT
 
 Network.Services = {}
 
@@ -55,6 +57,42 @@ function Network:Start()
     end
 
     netFolder.ChildAdded:Connect(serviceFolderAdded)
+end
+
+function NetServiceMT:GetEvent(eventName:string)
+    local networkObject = self[eventName]
+    if networkObject.ClassName ~= "NetEvent" then
+        error(`{eventName} is not a Net Event ({networkObject.ClassName})`)
+    end
+
+    return networkObject
+end
+
+function NetServiceMT:GetFunction(functionName:string)
+    local networkObject = self[functionName]
+    if networkObject.ClassName ~= "NetFunction" then
+        error(`{functionName} is not a Net Function ({networkObject.ClassName})`)
+    end
+
+    return networkObject
+end
+
+function NetServiceMT:GetProperty(propertyName:string)
+    local networkObject = self[propertyName]
+    if networkObject.ClassName ~= "NetProperty" then
+        error(`{propertyName} is not a Net Property ({networkObject.ClassName})`)
+    end
+
+    return networkObject
+end
+
+function NetServiceMT:GetTableProperty(propertyName:string)
+    local networkObject = self[propertyName]
+    if networkObject.ClassName ~= "NetTableProperty" then
+        error(`{propertyName} is not a Net Table Property ({networkObject.ClassName})`)
+    end
+
+    return networkObject
 end
 
 return Network
