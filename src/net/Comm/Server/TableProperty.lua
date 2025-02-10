@@ -40,6 +40,7 @@ function TableProperty.new(originalTable, location:Instance, name:string, overri
 
     self._isDict = isDictOverride ~= nil and isDictOverride or isDict(originalTable)
     self._value = originalTable
+    self._lastValue = table.clone(originalTable)
 
     self.ClassName = "NetTableProperty"
 
@@ -57,6 +58,23 @@ function TableProperty.new(originalTable, location:Instance, name:string, overri
     return self
 end
 
+function TablePropertyMT._fireIfChanged(self:TablePropertyClass, event:string, ...)
+    local isDifferent = false
+    for k, v in self._value do
+        if self._lastValue[k] ~= v then
+            isDifferent = true
+            break
+        end
+    end
+
+    self._lastValue = table.clone(self._value)
+
+    if isDifferent then
+        print("Firing")
+        self._remote:FireAllClients(event, ...)
+    end
+end
+
 function TablePropertyMT.Get(self:TablePropertyClass): any
     return self._value
 end
@@ -69,7 +87,8 @@ function TablePropertyMT.Insert<T>(self:TablePropertyClass, value:T): T
 
     table.insert(self._value, value)
 
-    self._remote:FireAllClients("Insert", self._value, value)
+    -- self._remote:FireAllClients("Insert", self._value, value)
+    self:_fireIfChanged("Insert", value)
 
     return value
 end
@@ -82,7 +101,8 @@ function TablePropertyMT.Remove(self:TablePropertyClass, index:number?)
 
     local result = table.remove(self._value, index)
 
-    self._remote:FireAllClients("Remove", self._value, result)
+    -- self._remote:FireAllClients("Remove", self._value, result)
+    self:_fireIfChanged("Remove", index, result)
 
     return result
 end
@@ -101,7 +121,8 @@ function TablePropertyMT.Key<T>(self:TablePropertyClass, key:any, value:T): T
 
     self._value[key] = value
 
-    self._remote:FireAllClients("Key", self._value, key, value)
+    -- self._remote:FireAllClients("Key", self._value, key, value)
+    self:_fireIfChanged("Key", key, value)
 
     return value
 end

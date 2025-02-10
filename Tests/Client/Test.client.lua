@@ -13,25 +13,10 @@ function Controller:_start()
     print("Controller start")
     local ServerService = Net:GetService("TestService")
 
-    ServerService.RandomNumber.ClientEvent:Connect(function(randNum)
-        print("GOT RAND NUM!, ", randNum)
-    end)
-    
-    local function onChanged(value)
-        print("Players: ", value)
-    end
-    onChanged(ServerService.AmountOfPlayers:Get())
-    ServerService.AmountOfPlayers.Changed:Connect(onChanged)
-
-    local DictTable = ServerService.DictTable
-
-    DictTable:OnReady():await()
-
-    DictTable.KeyChanged:Connect(function(_newValue, k, v)
-        print(`Key {k} was changed to {v}`)
-    end)
-    DictTable.Changed:Connect(function(newValue)
-        print("New Value", newValue)
+    local TableTest = ServerService.TableTest
+    TableTest:OnReady():await()
+    TableTest.Changed:Connect(function()
+        warn("I changed")
     end)
 end
 

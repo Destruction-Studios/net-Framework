@@ -1,5 +1,7 @@
 export type PromiseLike = {
     andThen:(self:PromiseLike, ...any) -> PromiseLike,
+    await:(self:PromiseLike) -> PromiseLike,
+    finally:(self:PromiseLike) -> PromiseLike,
     catch:(self:PromiseLike, err:any) -> PromiseLike,
 }
 
@@ -29,7 +31,8 @@ export type PropertyClass<T> = {
 }
 
 export type TablePropertyClass = {
-    _value:{any},
+    _value:{},
+    _lastValue:{},
     _isDict:boolean,
     _remote:RemoteEvent,
     _ready:boolean,
@@ -38,10 +41,16 @@ export type TablePropertyClass = {
 
     OnReady:(self:TablePropertyClass) -> PromiseLike,
 
+    _fireIfChanged:(self:TablePropertyClass, event:string, ...any) -> nil,
     Key:<T>(self:TablePropertyClass, key:string, value:T) -> T,
     Insert:<T>(self:TablePropertyClass, value:T) -> T,
     Find:(self:TablePropertyClass, value:any, init:number?) -> number?,
     Remove:(self:TablePropertyClass, index:number?) -> any?,
+
+    Changed:RBXScriptSignal,
+    KeyChanged:RBXScriptSignal,
+    Inserted:RBXScriptSignal,
+    Removed:RBXScriptSignal,
 }
 
 export type FunctionClass = {
