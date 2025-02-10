@@ -82,7 +82,7 @@ function TablePropertyMT._fireIfChanged(self:TablePropertyClass, event:string, .
     self._lastValue = table.clone(self._value)
 
     if isDifferent then
-        self._remote:FireAllClients(event, ...)
+        self._remote:FireAllClients(event, self._value, ...)
     end
 end
 
