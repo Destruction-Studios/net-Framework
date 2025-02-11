@@ -66,7 +66,7 @@ function ModulePoolMT:_runInitFunc()
                 table.insert(initFunctions, Promise.new(function(r)
                     local start = DateTime.now().UnixTimestampMillis
                     v:_init()
-                    Flags.runIfFlag("debug", print, `Initialized Net {self._moduleType} '{v.Name}' ({DateTime.now().UnixTimestampMillis - start} milliseconds)`)
+                    Flags.runIfFlag("debug", print, `Initialized Net {self._moduleType} '{v.Name}' ({DateTime.now().UnixTimestampMillis - start} ms)`)
                     r()
                 end):catch(function(err)
                     Flags.runIfNotFlag("silent", warn, `\n\nError initializing Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
@@ -76,7 +76,7 @@ function ModulePoolMT:_runInitFunc()
 
         self._initialized = true
         
-        Promise.all(initFunctions)
+        Promise.all(initFunctions):await()
         
         resolve(netStartMS)
     end):andThen(function(netStartMS)
