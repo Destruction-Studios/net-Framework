@@ -18,6 +18,9 @@ function Controller:_start()
     TableTest.Changed:Connect(function()
         warn("I changed")
     end)
+    TableTest.SubTableEdited:Connect(function(a, b, c)
+        print("EDITED ", a, b, c)
+    end)
 end
 
 Net:StartNet():andThen(function()

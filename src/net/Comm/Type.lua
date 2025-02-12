@@ -42,7 +42,8 @@ export type TablePropertyClass = {
     OnReady:(self:TablePropertyClass) -> PromiseLike,
 
     _fireIfChanged:(self:TablePropertyClass, event:string, ...any) -> nil,
-    Key:<T>(self:TablePropertyClass, key:string, value:T) -> T,
+    Key:<T>(self:TablePropertyClass, key:any, value:T) -> T,
+    EditSubTable:<T>(self:TablePropertyClass, key:any, editedValue:T) -> T,
     Insert:<T>(self:TablePropertyClass, value:T) -> T,
     Find:(self:TablePropertyClass, value:any, init:number?) -> number?,
     Remove:(self:TablePropertyClass, index:number?) -> any?,
@@ -51,6 +52,7 @@ export type TablePropertyClass = {
     KeyChanged:RBXScriptSignal,
     Inserted:RBXScriptSignal,
     Removed:RBXScriptSignal,
+    SubTableEdited:RBXScriptSignal,
 }
 
 export type FunctionClass = {

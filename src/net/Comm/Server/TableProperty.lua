@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 
 local Type = require(script.Parent.Parent.Type)
+local Utils = require(script.Parent.Parent.Parent.Utils)
 
 type TablePropertyClass = Type.TablePropertyClass
 
@@ -30,6 +31,28 @@ local function isDict(tbl)
     return false
 end
 
+local function isTableDifferent(old, new)
+    if (old == nil and new ~= nil) or (old ~= nil and new == nil) then
+        return true
+    end
+    if getLengthOfDict(new) ~= getLengthOfDict(old) then
+        return true
+    else
+        for k, v in new do
+            if old[k] ~= v then
+                return true
+            elseif typeof(v) == "table" then
+                print("TBL ", v, old[k], new[k])
+                if isTableDifferent(old[k], new[k]) then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
 local function onPlayerAdded(player:Player)
     for _, v in properties do
         v._remote:FireClient(player, "Init", v._value)
@@ -47,7 +70,7 @@ function TableProperty.new(originalTable, location:Instance, name:string, overri
 
     self._isDict = isDictOverride ~= nil and isDictOverride or isDict(originalTable)
     self._value = originalTable
-    self._lastValue = table.clone(originalTable)
+    self._lastValue = Utils.copy(self._value, true)
 
     self.ClassName = "NetTableProperty"
 
@@ -66,20 +89,12 @@ function TableProperty.new(originalTable, location:Instance, name:string, overri
 end
 
 function TablePropertyMT._fireIfChanged(self:TablePropertyClass, event:string, ...)
-    local isDifferent = false
+    print(self._lastValue, self._value)
+    local isDifferent = isTableDifferent(self._lastValue, self._value)
 
-    if getLengthOfDict(self._value) ~= getLengthOfDict(self._lastValue) then
-        isDifferent = true
-    else
-        for k, v in self._value do
-            if self._lastValue[k] ~= v then
-                isDifferent = true
-                break
-            end
-        end
-    end
+    print(isDifferent)
 
-    self._lastValue = table.clone(self._value)
+    self._lastValue = Utils.copy(self._value)
 
     if isDifferent then
         self._remote:FireAllClients(event, self._value, ...)
@@ -119,9 +134,23 @@ function TablePropertyMT.Remove(self:TablePropertyClass, index:number?)
 end
 
 function TablePropertyMT.Find(self:TablePropertyClass, value:any, init:number?): number?
+    if self._isDict then
+        warn(`{self._remote.Name} is not an array`)
+        return
+    end
     local result = table.find(self._value, value, init)
 
     return result
+end
+
+function TablePropertyMT.EditSubTable(self:TablePropertyClass, key:string, editedValue:{})
+    for k, v in editedValue do
+        self._value[key][k] = v
+    end
+
+    self:_fireIfChanged("EditSubTable", key, editedValue)
+
+    return editedValue
 end
 
 function TablePropertyMT.Key<T>(self:TablePropertyClass, key:any, value:T): T
