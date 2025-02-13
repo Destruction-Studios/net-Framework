@@ -37,7 +37,7 @@ function TableProperty.new(remoteEvent:RemoteEvent)
     self.Removed = Signal.new()
     self.KeyChanged = Signal.new()
     self.Changed = Signal.new()
-    self.SubTableEdited = Signal.new()
+    self.Transformed = Signal.new()
 
 
     self._remote.OnClientEvent:Connect(function(action, value, ...)
@@ -56,8 +56,8 @@ function TableProperty.new(remoteEvent:RemoteEvent)
             self.Removed:Fire(value, ...)
         elseif action == "Key" then
             self.KeyChanged:Fire(value, ...)
-        elseif action == "EditSubTable" then
-            self.SubTableEdited:Fire(value, ...)
+        elseif action == "Transform" then
+            self.Transformed:Fire(value, ...)
         end
     end)
 

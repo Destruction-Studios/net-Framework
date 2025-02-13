@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 
 local Type = require(script.Parent.Parent.Type)
 local Utils = require(script.Parent.Parent.Parent.Utils)
+local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
 
 type TablePropertyClass = Type.TablePropertyClass
 
@@ -89,10 +90,7 @@ function TableProperty.new(originalTable, location:Instance, name:string, overri
 end
 
 function TablePropertyMT._fireIfChanged(self:TablePropertyClass, event:string, ...)
-    print(self._lastValue, self._value)
     local isDifferent = isTableDifferent(self._lastValue, self._value)
-
-    print(isDifferent)
 
     self._lastValue = Utils.copy(self._value)
 
@@ -102,7 +100,7 @@ function TablePropertyMT._fireIfChanged(self:TablePropertyClass, event:string, .
 end
 
 function TablePropertyMT.Get(self:TablePropertyClass): any
-    return self._value
+    return Utils.copy(self._value, true)
 end
 
 function TablePropertyMT.Insert<T>(self:TablePropertyClass, value:T): T
@@ -143,14 +141,17 @@ function TablePropertyMT.Find(self:TablePropertyClass, value:any, init:number?):
     return result
 end
 
-function TablePropertyMT.EditSubTable(self:TablePropertyClass, key:string, editedValue:{})
-    for k, v in editedValue do
-        self._value[key][k] = v
-    end
+function TablePropertyMT.Transform(self:TablePropertyClass, transformer:(value:any) -> boolean)
+    local currentValue = self:Get()
+    local lastValue = self:Get()
+    return Promise.try(transformer, currentValue):andThen(function(shouldUpdate)
+        if shouldUpdate then
+            self._value = currentValue
+            self._lastValue = currentValue
 
-    self:_fireIfChanged("EditSubTable", key, editedValue)
-
-    return editedValue
+            self._remote:FireAllClients("Transform", currentValue, lastValue)
+        end
+    end)
 end
 
 function TablePropertyMT.Key<T>(self:TablePropertyClass, key:any, value:T): T

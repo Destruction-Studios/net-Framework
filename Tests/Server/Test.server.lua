@@ -6,13 +6,10 @@ local Service1 = Net:Service {
     Name = "TestService",
     Network = {
         TableTest = Net.Network.Property{
-            Key1 = 123,
-            AmIAwesome = true,
-            Edited = {
-                Value1 = 123,
-                Value2 = false,
-                Value3 = "hehe",
-            },
+            ["Destruction_Studio"] = {
+                Item = "",
+                Points = 30,
+            }
         }
     }
 }
@@ -22,18 +19,13 @@ function Service1:_start()
 
     local TableTest = self:GetTableProperty("TableTest")
 
-    task.wait(10)
+    task.wait(8)
 
-    print(TableTest:Get())
-    TableTest:EditSubTable("Edited", {
-        Value3 = "sad"
-    })
-    print(TableTest:Get())
-    -- print(TableTest:Get())
-    -- TableTest:Key("Edited", {
-    --     Value3 = "sad"
-    -- })
-    -- print(TableTest:Get())
+    TableTest:Transform(function(value)
+        value.Destruction_Studio.Item = "Cheese"
+
+        return true
+    end)
 end
 
 Net:StartNet():andThen(function()

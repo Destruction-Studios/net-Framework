@@ -15,11 +15,9 @@ function Controller:_start()
 
     local TableTest = ServerService.TableTest
     TableTest:OnReady():await()
-    TableTest.Changed:Connect(function()
-        warn("I changed")
-    end)
-    TableTest.SubTableEdited:Connect(function(a, b, c)
-        print("EDITED ", a, b, c)
+    TableTest.Changed:Connect(function(value, lastValue)
+        warn("Changed", value)
+        print(value, lastValue)
     end)
 end
 
