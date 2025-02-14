@@ -46,7 +46,10 @@ end
 
 function NetClient:StartNet()
     Network:Start()
-    return modulePool:StartAll()
+    return modulePool:StartAll():andThen(function()
+        onStartBindable:Fire()
+        task.defer(onStartBindable.Destroy, onStartBindable)
+    end)
 end
 
 function NetClient:OnStart()
