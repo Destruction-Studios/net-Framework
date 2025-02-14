@@ -19,13 +19,11 @@ function FunctionServer.new(object:RemoteFunction): FunctionClass
     return self
 end
 
-function FunctionServerMT.SetInvokeFunction(self:FunctionClass, fn:(player:Player, ...any)->any)
+function FunctionServerMT.OnInvoke(self:FunctionClass, func:(player:Player, ...any) -> any)
     if self._hasInvokeBeenSet then
         warn(`Invoke function for {self._instance.Name} has already been set, overriding`)
     end
-    self._hasInvokeBeenSet = true
-
-    self._instance.OnServerInvoke = fn
+    self._instance.OnServerInvoke = func
 end
 
 return FunctionServer

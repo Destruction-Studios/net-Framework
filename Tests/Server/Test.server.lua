@@ -10,9 +10,15 @@ local Service1 = Net:Service {
                 Item = "",
                 Points = 30,
             }
-        }
+        },
+        TestFn = Net.Network.Function()
     }
 }
+
+Service1.Network.TestFn:OnInvoke(function(player:Player, ...:any)
+    print(`from {player.Name} data: `, ...)
+    return math.random(1, 100)
+end)
 
 function Service1:_start()
     print("Starting Test Service with network: ", self.Network)

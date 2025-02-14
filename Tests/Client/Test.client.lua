@@ -19,6 +19,8 @@ function Controller:_start()
         warn("Changed", value)
         print(value, lastValue)
     end)
+
+    print("Got: ", ServerService.TestFn:Invoke():expect())
 end
 
 Net:StartNet():andThen(function()

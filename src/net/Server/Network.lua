@@ -12,8 +12,8 @@ function Network.Event(isUnreliable:boolean)
     return isUnreliable and Network.UNRELIABLE_EVENT or Network.EVENT
 end
 
-function Network.Function(fn:(player:Player, ...any)->any)
-    return {Network.FUNCTION, fn}
+function Network.Function()
+    return Network.FUNCTION
 end
 
 function Network.Property(...)
