@@ -6,12 +6,12 @@ local Flags = {}
 
 local currentFlags = table.clone(DEFAULT_FLAGS)
 
-function Flags.setFlag(flagName:string, studio:boolean?, server:boolean?)
+function Flags.setFlag(flagName:string, studio:boolean?, game:boolean?)
     if DEFAULT_FLAGS[flagName] == nil then
         error(`{flagName} is not a valid Net Flag`, 2)
     end
     local oldFlagValue = currentFlags[flagName]
-    currentFlags[flagName] = {Studio = studio or oldFlagValue.Studio, Server = server or oldFlagValue.Server}
+    currentFlags[flagName] = {Studio = studio or oldFlagValue.Studio, Game = game or oldFlagValue.Game}
 end
 
 function Flags.isFlagEnabled(flagName:string): boolean
@@ -22,7 +22,7 @@ function Flags.isFlagEnabled(flagName:string): boolean
     if RunService:IsStudio() then
         return flagValue.Studio
     end
-    return flagValue.Server
+    return flagValue.Game
 end
 
 function Flags.runIfFlag<T>(flagName:string, fn:(...any)->T?, ...:any): T?
