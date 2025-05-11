@@ -1,9 +1,7 @@
-
 local Utils = {}
 
-
 function Utils.lockDeep<T>(tbl: T): T
-    local function freeze(t: { [any]: any })
+	local function freeze(t: { [any]: any })
 		for k, v in pairs(t) do
 			if type(v) == "table" then
 				t[k] = freeze(v)

@@ -1,4 +1,3 @@
-
 local UniqueKey = require(script.Parent.Parent.Parent.UniqueKey)
 
 local Network = {}
@@ -8,16 +7,16 @@ Network.UNRELIABLE_EVENT = UniqueKey("Net Network Unreliable Event")
 Network.PROPERTY = UniqueKey("Net Network Property")
 Network.FUNCTION = UniqueKey("Net Network Function")
 
-function Network.Event(isUnreliable:boolean)
-    return isUnreliable and Network.UNRELIABLE_EVENT or Network.EVENT
+function Network.Event(isUnreliable: boolean)
+	return isUnreliable and Network.UNRELIABLE_EVENT or Network.EVENT
 end
 
 function Network.Function()
-    return Network.FUNCTION
+	return Network.FUNCTION
 end
 
 function Network.Property(...)
-    return {Network.PROPERTY, ...}
+	return { Network.PROPERTY, ... }
 end
 
 return Network

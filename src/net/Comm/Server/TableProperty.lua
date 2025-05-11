@@ -10,162 +10,165 @@ local TableProperty = {}
 local TablePropertyMT = {}
 TablePropertyMT.__index = TablePropertyMT
 
-local properties:{[string]:TablePropertyClass} = {}
+local properties: { [string]: TablePropertyClass } = {}
 
-local function getLengthOfDict(tbl:{})
-    local loopAmount = 0
-    for _, _ in tbl do
-        loopAmount += 1
-    end
+local function getLengthOfDict(tbl: {})
+	local loopAmount = 0
+	for _, _ in tbl do
+		loopAmount += 1
+	end
 
-    return loopAmount
+	return loopAmount
 end
 
 local function isDict(tbl)
-    local loopAmount = getLengthOfDict(tbl)
+	local loopAmount = getLengthOfDict(tbl)
 
-    local amount = #tbl
+	local amount = #tbl
 
-    if loopAmount > 0 and amount == 0 then
-        return true
-    end
-    return false
+	if loopAmount > 0 and amount == 0 then
+		return true
+	end
+	return false
 end
 
 local function isTableDifferent(old, new)
-    if (old == nil and new ~= nil) or (old ~= nil and new == nil) then
-        return true
-    end
-    if getLengthOfDict(new) ~= getLengthOfDict(old) then
-        return true
-    else
-        for k, v in new do
-            if old[k] ~= v then
-                return true
-            elseif typeof(v) == "table" then
-                print("TBL ", v, old[k], new[k])
-                if isTableDifferent(old[k], new[k]) then
-                    return true
-                end
-            end
-        end
-    end
+	if (old == nil and new ~= nil) or (old ~= nil and new == nil) then
+		return true
+	end
+	if getLengthOfDict(new) ~= getLengthOfDict(old) then
+		return true
+	else
+		for k, v in new do
+			if old[k] ~= v then
+				return true
+			elseif typeof(v) == "table" then
+				print("TBL ", v, old[k], new[k])
+				if isTableDifferent(old[k], new[k]) then
+					return true
+				end
+			end
+		end
+	end
 
-    return false
+	return false
 end
 
-local function onPlayerAdded(player:Player)
-    for _, v in properties do
-        v._remote:FireClient(player, "Init", v._value)
-    end
+local function onPlayerAdded(player: Player)
+	for _, v in properties do
+		v._remote:FireClient(player, "Init", v._value)
+	end
 end
 
-function TableProperty.new(originalTable, location:Instance, name:string, override:string)
-    local self = {}
+function TableProperty.new(originalTable, location: Instance, name: string, override: string)
+	local self = {}
 
-    local isDictOverride = nil
-    if override ~= nil then
-        assert(override == "Dictionary" or override == "Array", `Invalid Net Table Override type expected Dictionary or Array got {override}`)
-        isDictOverride = override == "Dictionary"
-    end
+	local isDictOverride = nil
+	if override ~= nil then
+		assert(
+			override == "Dictionary" or override == "Array",
+			`Invalid Net Table Override type expected Dictionary or Array got {override}`
+		)
+		isDictOverride = override == "Dictionary"
+	end
 
-    self._isDict = isDictOverride ~= nil and isDictOverride or isDict(originalTable)
-    self._value = originalTable
-    self._lastValue = Utils.copy(self._value, true)
+	self._isDict = isDictOverride ~= nil and isDictOverride or isDict(originalTable)
+	self._value = originalTable
+	self._lastValue = Utils.copy(self._value, true)
 
-    self.ClassName = "NetTableProperty"
+	self.ClassName = "NetTableProperty"
 
-    self._remote = Instance.new("RemoteEvent")
-    self._remote:SetAttribute("_property", true)
-    self._remote.Name = name
-    self._remote.Parent = location
+	self._remote = Instance.new("RemoteEvent")
+	self._remote:SetAttribute("_property", true)
+	self._remote.Name = name
+	self._remote.Parent = location
 
-    self._remote:FireAllClients("Init", self._value)
-    
-    setmetatable(self, TablePropertyMT)
+	self._remote:FireAllClients("Init", self._value)
 
-    properties[self._remote.Name] = self
+	setmetatable(self, TablePropertyMT)
 
-    return self
+	properties[self._remote.Name] = self
+
+	return self
 end
 
-function TablePropertyMT._fireIfChanged(self:TablePropertyClass, event:string, ...)
-    local isDifferent = isTableDifferent(self._lastValue, self._value)
+function TablePropertyMT._fireIfChanged(self: TablePropertyClass, event: string, ...)
+	local isDifferent = isTableDifferent(self._lastValue, self._value)
 
-    self._lastValue = Utils.copy(self._value)
+	self._lastValue = Utils.copy(self._value)
 
-    if isDifferent then
-        self._remote:FireAllClients(event, self._value, ...)
-    end
+	if isDifferent then
+		self._remote:FireAllClients(event, self._value, ...)
+	end
 end
 
-function TablePropertyMT.Get(self:TablePropertyClass): any
-    return Utils.copy(self._value, true)
+function TablePropertyMT.Get(self: TablePropertyClass): any
+	return Utils.copy(self._value, true)
 end
 
-function TablePropertyMT.Insert<T>(self:TablePropertyClass, value:T): T
-    if self._isDict then
-        warn(`{self._remote.Name} is not an array`)
-        return
-    end
+function TablePropertyMT.Insert<T>(self: TablePropertyClass, value: T): T
+	if self._isDict then
+		warn(`{self._remote.Name} is not an array`)
+		return
+	end
 
-    table.insert(self._value, value)
+	table.insert(self._value, value)
 
-    -- self._remote:FireAllClients("Insert", self._value, value)
-    self:_fireIfChanged("Insert", value)
+	-- self._remote:FireAllClients("Insert", self._value, value)
+	self:_fireIfChanged("Insert", value)
 
-    return value
+	return value
 end
 
-function TablePropertyMT.Remove(self:TablePropertyClass, index:number?)
-    if self._isDict then
-        warn(`{self._remote.Name} is not an array`)
-        return
-    end
+function TablePropertyMT.Remove(self: TablePropertyClass, index: number?)
+	if self._isDict then
+		warn(`{self._remote.Name} is not an array`)
+		return
+	end
 
-    local result = table.remove(self._value, index)
+	local result = table.remove(self._value, index)
 
-    -- self._remote:FireAllClients("Remove", self._value, result)
-    self:_fireIfChanged("Remove", index, result)
+	-- self._remote:FireAllClients("Remove", self._value, result)
+	self:_fireIfChanged("Remove", index, result)
 
-    return result
+	return result
 end
 
-function TablePropertyMT.Find(self:TablePropertyClass, value:any, init:number?): number?
-    if self._isDict then
-        warn(`{self._remote.Name} is not an array`)
-        return
-    end
-    local result = table.find(self._value, value, init)
+function TablePropertyMT.Find(self: TablePropertyClass, value: any, init: number?): number?
+	if self._isDict then
+		warn(`{self._remote.Name} is not an array`)
+		return
+	end
+	local result = table.find(self._value, value, init)
 
-    return result
+	return result
 end
 
-function TablePropertyMT.Transform(self:TablePropertyClass, transformer:(value:any) -> boolean)
-    local currentValue = self:Get()
-    local lastValue = self:Get()
-    return Promise.try(transformer, currentValue):andThen(function(shouldUpdate)
-        if shouldUpdate then
-            self._value = currentValue
-            self._lastValue = currentValue
+function TablePropertyMT.Transform(self: TablePropertyClass, transformer: (value: any) -> boolean)
+	local currentValue = self:Get()
+	local lastValue = self:Get()
+	return Promise.try(transformer, currentValue):andThen(function(shouldUpdate)
+		if shouldUpdate then
+			self._value = currentValue
+			self._lastValue = currentValue
 
-            self._remote:FireAllClients("Transform", currentValue, lastValue)
-        end
-    end)
+			self._remote:FireAllClients("Transform", currentValue, lastValue)
+		end
+	end)
 end
 
-function TablePropertyMT.Key<T>(self:TablePropertyClass, key:any, value:T): T
-    if not self._isDict then
-        warn(`{self._remote.Name} is not a dictionary`)
-        return
-    end
+function TablePropertyMT.Key<T>(self: TablePropertyClass, key: any, value: T): T
+	if not self._isDict then
+		warn(`{self._remote.Name} is not a dictionary`)
+		return
+	end
 
-    self._value[key] = value
+	self._value[key] = value
 
-    -- self._remote:FireAllClients("Key", self._value, key, value)
-    self:_fireIfChanged("Key", key, value)
+	-- self._remote:FireAllClients("Key", self._value, key, value)
+	self:_fireIfChanged("Key", key, value)
 
-    return value
+	return value
 end
 
 Players.PlayerAdded:Connect(onPlayerAdded)
