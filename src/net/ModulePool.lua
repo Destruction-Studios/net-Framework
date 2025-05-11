@@ -60,10 +60,10 @@ function ModulePoolMT:_runInitFunc()
 
         local netStartMS = DateTime.now().UnixTimestampMillis
 
-        local initFunctions = {}
+        local initPromises = {}
         for _, v in self:GetPool() do
             if typeof(v._init) == "function" then
-                table.insert(initFunctions, Promise.new(function(r)
+                table.insert(initPromises, Promise.new(function(r)
                     local start = DateTime.now().UnixTimestampMillis
                     v:_init()
                     Flags.runIfFlag("debug", print, `Initialized Net {self._moduleType} '{v.Name}' ({DateTime.now().UnixTimestampMillis - start} ms)`)
@@ -76,22 +76,28 @@ function ModulePoolMT:_runInitFunc()
 
         self._initialized = true
         
-        Promise.all(initFunctions):await()
+        Promise.all(initPromises):await()
         
         resolve(netStartMS)
     end):andThen(function(netStartMS)
+        local startPromises = {}
+
         for _, v in self:GetPool() do
             if typeof(v._start) == "function" then
-                local start = DateTime.now().UnixTimestampMillis
-                Promise.try(v._start, v):andThen(function()
+                table.insert(startPromises, Promise.new(function(r)
+                    local start = DateTime.now().UnixTimestampMillis
+                    v:_start()
                     Flags.runIfFlag("debug", print, `Started Net {self._moduleType} '{v.Name}' ({DateTime.now().UnixTimestampMillis - start} milliseconds)`)
-                end):catch(function(err)
+                    r()
+                end)):catch(function(err)
                     Flags.runIfNotFlag("silent", warn, `\n\nError starting Net {self._moduleType} '{v.Name}'\n\n{err}\n\n`)
                 end)
             end
         end
 
-        Flags.runIfFlag("debug", print, `Net Started ({DateTime.now().UnixTimestampMillis - netStartMS} milliseconds)`)
+        Promise.all(startPromises):andThen(function()
+            Flags.runIfFlag("debug", print, `Net Started ({DateTime.now().UnixTimestampMillis - netStartMS} milliseconds)`)
+        end)
         
         self._started = true
     end)

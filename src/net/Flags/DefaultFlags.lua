@@ -1,4 +1,4 @@
 return {
-    ["debug"] = {Server = false, Studio = false},
-    ["silent"] = {Server = false, Studio = false},
+    ["debug"] = {Game = true, Studio = true},
+    ["silent"] = {Game = false, Studio = false},
 }
