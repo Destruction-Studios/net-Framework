@@ -1,4 +1,5 @@
 local Promise = require(script.Parent.Parent.Promise)
+local Signal = require(script.Parent.Parent.Signal)
 local Flags = require(script.Parent.Flags)
 
 local ModulePool = {}
@@ -14,6 +15,8 @@ function ModulePool.new()
 	self._initialized = false
 	self._started = false
 	self._info = { Complete = 0, Failed = 0 }
+
+	self._initializedSignal = Signal.new()
 
 	return setmetatable(self, ModulePoolMT)
 end
@@ -85,6 +88,7 @@ function ModulePoolMT:_runInitFunc()
 		end
 
 		self._initialized = true
+		self._initializedSignal:Fire()
 
 		Promise.all(initPromises):await()
 
@@ -130,6 +134,14 @@ end
 
 function ModulePoolMT:StartAll()
 	return self:_runInitFunc()
+end
+
+function ModulePoolMT:AwaitInit()
+	if self:HasInitialized() then
+		return Promise.resolve()
+	end
+
+	return Promise.fromEvent(self._initializedSignal)
 end
 
 return ModulePool

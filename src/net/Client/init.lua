@@ -68,7 +68,7 @@ function NetClient:OnStart()
 end
 
 function NetClient:OnLoad(netModules: { [string]: typeof(CONTROLLER) | typeof(SERVICE) })
-	NetClient:OnStart():andThen(function()
+	modulePool:AwaitInit():andThen(function()
 		for name, netModuleType in netModules do
 			Promise.new(function(resolve, reject)
 				local module = nil

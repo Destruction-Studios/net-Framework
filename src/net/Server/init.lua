@@ -145,7 +145,7 @@ function NetServer:OnStart()
 end
 
 function NetServer:OnLoad(netModules: { [string]: typeof(SERVICE) })
-	NetServer:OnStart():andThen(function()
+	modulePool:AwaitInit():andThen(function()
 		for name, netModuleType in netModules do
 			Promise.new(function(resolve, reject)
 				local module = nil
