@@ -77,7 +77,9 @@ function NetClient:OnLoad(netModules: { [string]: typeof(CONTROLLER) | typeof(SE
 				elseif netModuleType == SERVICE then
 					module = NetClient:GetService(name)
 				else
-					reject(`{netModuleType} ({typeof(netModuleType)}) Is not a valid value for {name}`)
+					reject(
+						`{name}: {netModuleType} ({typeof(netModuleType)}) Is not a valid 'Net.Type' value for Net:OnLoad`
+					)
 				end
 
 				netModules[name] = module
