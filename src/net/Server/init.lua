@@ -152,7 +152,9 @@ function NetServer:OnLoad(netModules: { [string]: typeof(SERVICE) })
 				if netModuleType == SERVICE then
 					module = NetServer:GetService(name)
 				else
-					reject(`{netModuleType} ({typeof(netModuleType)}) Is not a valid value for {name}`)
+					reject(
+						`{name}: {netModuleType} ({typeof(netModuleType)}) Is not a valid 'Net.Type' value for Net:OnLoad`
+					)
 				end
 
 				netModules[name] = module
