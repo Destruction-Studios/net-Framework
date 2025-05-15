@@ -6,6 +6,11 @@ local Type = require(script.Comm.Type)
 type UniqueKey = {}
 type PromiseLike = Type.PromiseLike
 
+export type Type = {
+	Controller: UniqueKey,
+	Service: UniqueKey?,
+}
+
 export type ControllerInfo = {
 	Name: string,
 }
@@ -16,16 +21,16 @@ export type ServiceInfo = {
 }
 
 export type Controller = {
-	_init: (self: ModuleBase) -> nil,
-	_start: (self: ModuleBase) -> nil,
+	_init: (self: Controller) -> nil,
+	_start: (self: Controller) -> nil,
 
 	Name: string,
 }
-export type Service = ModuleBase & {
+export type Service = {
 	Name: string,
 
-	_init: (self: ModuleBase) -> nil,
-	_start: (self: ModuleBase) -> nil,
+	_init: (self: Service) -> nil,
+	_start: (self: Service) -> nil,
 
 	Name: string,
 	Network: { [string]: any },
@@ -48,6 +53,8 @@ export type Flag = {
 }
 
 export type Net = {
+	Type: Type,
+
 	Controller: (self: Net, controller: ControllerInfo) -> Controller,
 	Service: (self: Net, service: ServiceInfo) -> Service,
 
@@ -55,8 +62,9 @@ export type Net = {
 	Flag: Flag,
 
 	GetService: (self: Net, serviceName: string) -> Service,
-	GetController: (self: Net, ServiceInfo: string) -> Controller,
+	GetController: (self: Net, controllerName: string) -> Controller,
 
+	OnLoad: (self: Service, services: { [string]: UniqueKey }) -> { [string]: Service | Controller },
 	OnStart: (self: Net) -> PromiseLike,
 
 	StartNet: (self: Net) -> PromiseLike,

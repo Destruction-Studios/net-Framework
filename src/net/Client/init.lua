@@ -1,7 +1,16 @@
 local ModulePool = require(script.Parent.ModulePool)
 local Promise = require(script.Parent.Parent.Promise)
+local UniqueKey = require(script.Parent.Parent.UniqueKey)
 
-local NetClient = {}
+local CONTROLLER = UniqueKey("Controller")
+local SERVICE = UniqueKey("Service")
+
+local NetClient = {
+	Type = {
+		Controller = CONTROLLER,
+		Service = SERVICE,
+	},
+}
 local Network = require(script.Network)
 local Flags = require(script.Parent.Flags)
 
@@ -56,6 +65,27 @@ function NetClient:OnStart()
 		return Promise.resolve()
 	end
 	return Promise.fromEvent(onStartBindable.Event)
+end
+
+function NetClient:OnLoad(netModules: { [string]: typeof(CONTROLLER) | typeof(SERVICE) })
+	NetClient:OnStart():andThen(function()
+		for name, netModuleType in netModules do
+			Promise.new(function(resolve, reject)
+				local module = nil
+				if netModuleType == CONTROLLER then
+					module = NetClient:GetController(name)
+				elseif netModuleType == SERVICE then
+					module = NetClient:GetService(name)
+				else
+					reject(`{netModuleType} ({typeof(netModuleType)}) Is not a valid value for {name}`)
+				end
+
+				netModules[name] = module
+
+				resolve()
+			end)
+		end
+	end)
 end
 
 return NetClient

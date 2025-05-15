@@ -1,8 +1,15 @@
 local ModulePool = require(script.Parent.ModulePool)
 local Comm = require(script.Parent.Comm)
 local Promise = require(script.Parent.Parent.Promise)
+local UniqueKey = require(script.Parent.Parent.UniqueKey)
 
-local NetServer = {}
+local SERVICE = UniqueKey("Service")
+
+local NetServer = {
+	Type = {
+		Service = SERVICE,
+	},
+}
 local NetServiceMT = {}
 NetServiceMT.__index = NetServiceMT
 local Network = require(script.Network)
@@ -135,6 +142,25 @@ function NetServer:OnStart()
 		return Promise.resolve()
 	end
 	return Promise.fromEvent(onStartBindable.Event)
+end
+
+function NetServer:OnLoad(netModules: { [string]: typeof(SERVICE) })
+	NetServer:OnStart():andThen(function()
+		for name, netModuleType in netModules do
+			Promise.new(function(resolve, reject)
+				local module = nil
+				if netModuleType == SERVICE then
+					module = NetServer:GetService(name)
+				else
+					reject(`{netModuleType} ({typeof(netModuleType)}) Is not a valid value for {name}`)
+				end
+
+				netModules[name] = module
+
+				resolve()
+			end)
+		end
+	end)
 end
 
 function NetServiceMT:GetEvent(eventName: string)
