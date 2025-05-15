@@ -88,6 +88,8 @@ function NetClient:OnLoad(netModules: { [string]: typeof(CONTROLLER) | typeof(SE
 			end)
 		end
 	end)
+
+	return netModules
 end
 
 return NetClient

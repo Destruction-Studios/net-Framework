@@ -163,6 +163,8 @@ function NetServer:OnLoad(netModules: { [string]: typeof(SERVICE) })
 			end)
 		end
 	end)
+
+	return netModules
 end
 
 function NetServiceMT:GetEvent(eventName: string)
