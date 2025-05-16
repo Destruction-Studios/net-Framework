@@ -64,7 +64,7 @@ export type Net = {
 	GetService: (self: Net, serviceName: string) -> Service,
 	GetController: (self: Net, controllerName: string) -> Controller,
 
-	OnLoad: (self: Service, netModules: { [string]: any }) -> { [string]: Service | Controller },
+	OnLoad: (self: Service, netModules: { [string]: UniqueKey }) -> { [string]: Service },
 	OnStart: (self: Net) -> PromiseLike,
 
 	StartNet: (self: Net) -> PromiseLike,
