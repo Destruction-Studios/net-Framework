@@ -12,6 +12,12 @@ local NetServer = {
 }
 local NetServiceMT = {}
 NetServiceMT.__index = NetServiceMT
+
+local NetModuleMT = {}
+function NetModuleMT:__index(key)
+	error(`Controller/Service ({key}) is nil; Net has not yet initialized`)
+end
+
 local Network = require(script.Network)
 local Flags = require(script.Parent.Flags)
 
@@ -145,8 +151,12 @@ function NetServer:OnStart()
 end
 
 function NetServer:OnLoad(netModules: { [string]: typeof(SERVICE) })
+	local new = table.clone(netModules)
+	table.clear(netModules)
+	setmetatable(netModules, NetModuleMT)
+
 	modulePool:AwaitInit():andThen(function()
-		for name, netModuleType in netModules do
+		for name, netModuleType in new do
 			Promise.new(function(resolve, reject)
 				local module = nil
 				if netModuleType == SERVICE then
