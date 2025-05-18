@@ -11,7 +11,10 @@ function Flags.setFlag(flagName: string, studio: boolean?, game: boolean?)
 		error(`{flagName} is not a valid Net Flag`, 2)
 	end
 	local oldFlagValue = currentFlags[flagName]
-	currentFlags[flagName] = { Studio = studio or oldFlagValue.Studio, Game = game or oldFlagValue.Game }
+	currentFlags[flagName] = {
+		Studio = if studio ~= nil then studio else oldFlagValue.Studio,
+		Game = if game ~= nil then game else oldFlagValue.Game,
+	}
 end
 
 function Flags.isFlagEnabled(flagName: string): boolean

@@ -46,7 +46,7 @@ export type Network = {
 	Function: () -> UniqueKey,
 }
 export type Flag = {
-	setFlag: (flagName: string, studio: boolean?, server: boolean?) -> nil,
+	setFlag: (flagName: string, studio: boolean?, game: boolean?) -> nil,
 	isFlagEnabled: (flagName: string) -> boolean,
 	runIfFlag: <T>(flagName: string, fn: (...any) -> T?, ...any) -> T?,
 	runIfNotFlag: <T>(flagName: string, fn: (...any) -> T?, ...any) -> T?,
