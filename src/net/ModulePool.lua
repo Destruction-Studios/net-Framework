@@ -1,5 +1,6 @@
 local Promise = require(script.Parent.Parent.Promise)
 local Signal = require(script.Parent.Parent.Signal)
+local UniqueKey = require(script.Parent.Parent.UniqueKey)
 local Flags = require(script.Parent.Flags)
 
 local ModulePool = {}
@@ -9,6 +10,11 @@ ModulePoolMT.__index = ModulePoolMT
 function ModulePool.new()
 	local self = {}
 
+	self.CustomFunctionKey = UniqueKey("CustomFunction")
+
+	self._customFn = nil
+	self._customFuncSignals = {}
+	-- self._custom
 	self._pool = {}
 	self._moduleType = "Unknown"
 	self._hasStartBeenCalled = false
@@ -23,6 +29,10 @@ end
 
 function ModulePoolMT:SetModuleType(moduleType: string)
 	self._moduleType = moduleType
+end
+
+function ModulePoolMT:SetCustomFunction(module)
+	self._customFn = module
 end
 
 function ModulePoolMT:AddToPool(name, tbl)
@@ -51,6 +61,44 @@ end
 
 function ModulePoolMT:HasInitialized()
 	return self._initialized
+end
+
+function ModulePoolMT:_runCustomFn()
+	if self._customFn == nil then
+		return Promise.resolve()
+	end
+	return Promise.new(function(resolve, reject)
+		if typeof(self._customFn._start) ~= "function" then
+			reject(`Invalid CustomFunction _start type ({typeof(self._customFn._start)})`)
+			return
+		end
+
+		for key, value in self._customFn do
+			if value == self.CustomFunctionKey then
+				local signal = Signal.new()
+				self._customFn[key] = signal
+
+				self._customFuncSignals[key] = signal
+			elseif typeof(value) ~= "function" then
+				reject(`Invalid value for key {key} ({value})`)
+			end
+		end
+
+		Promise.try(self._customFn._start, self._customFn)
+			:timeout(3)
+			:catch(function(err)
+				if Promise.Error.isKind(err, Promise.Error.Kind.TimedOut) then
+					reject(`CustomFunction:_start took too long`)
+				else
+					reject(err)
+				end
+			end)
+			:await()
+
+		resolve()
+	end):catch(function(err)
+		warn(`\n\nError starting CustomFunctions\n\n{err}\n\n`)
+	end)
 end
 
 function ModulePoolMT:_runInitFunc()
@@ -133,6 +181,7 @@ function ModulePoolMT:_runInitFunc()
 end
 
 function ModulePoolMT:StartAll()
+	self:_runCustomFn():await()
 	return self:_runInitFunc()
 end
 

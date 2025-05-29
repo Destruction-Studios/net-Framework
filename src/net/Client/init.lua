@@ -5,10 +5,14 @@ local UniqueKey = require(script.Parent.Parent.UniqueKey)
 local CONTROLLER = UniqueKey("Controller")
 local SERVICE = UniqueKey("Service")
 
+local modulePool = ModulePool.new()
+modulePool:SetModuleType("Controller")
+
 local NetClient = {
 	Type = {
 		Controller = CONTROLLER,
 		Service = SERVICE,
+		CustomFunction = modulePool.CustomFunctionKey,
 	},
 }
 local NetModuleMT = {}
@@ -22,8 +26,6 @@ local Flags = require(script.Parent.Flags)
 NetClient.Network = Network
 NetClient.Flag = Flags
 
-local modulePool = ModulePool.new()
-modulePool:SetModuleType("Controller")
 local onStartBindable = Instance.new("BindableEvent")
 
 function NetClient:Controller(controller)
@@ -99,6 +101,12 @@ function NetClient:OnLoad(netModules: { [string]: typeof(CONTROLLER) | typeof(SE
 	end)
 
 	return netModules
+end
+
+function NetClient:SetCustomFunctions(module)
+	assert(not modulePool:HasStartBeenCalled(), `Net has already been started.`)
+	assert(not modulePool._customFn, `Custom Functions have already been set`)
+	modulePool:SetCustomFunction(module)
 end
 
 return NetClient

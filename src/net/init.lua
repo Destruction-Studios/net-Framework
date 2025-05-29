@@ -7,8 +7,9 @@ type UniqueKey = {}
 type PromiseLike = Type.PromiseLike
 
 export type Type = {
-	Controller: UniqueKey,
-	Service: UniqueKey?,
+	Controller: UniqueKey?,
+	Service: UniqueKey,
+	CustomFunction: UniqueKey,
 }
 
 export type ControllerInfo = {
