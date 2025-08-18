@@ -52,7 +52,9 @@ end
 function NetClient:GetService(serviceName: string)
 	assert(modulePool:HasStartBeenCalled(), `Net must be started to access server Services`)
 	assert(typeof(serviceName) == "string", `Net Service name must be of type 'string' got {typeof(serviceName)}`)
-	assert(Network.Services[serviceName], `Net Service '{serviceName}' does not exist on client`)
+	if not Network.Services[serviceName] then
+		warn(`Net Service {serviceName} does not exist\n{debug.traceback()}`)
+	end
 
 	return Network.Services[serviceName]
 end
