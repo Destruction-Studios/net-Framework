@@ -28,4 +28,12 @@ function Utils.copy<T>(t: T, deep: boolean?): T
 	return DeepCopy(t :: any) :: T
 end
 
+function Utils.getDictLength(dict)
+	local result = 0
+	for _, _ in dict do
+		result += 1
+	end
+	return result
+end
+
 return Utils

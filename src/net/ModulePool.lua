@@ -87,10 +87,10 @@ function ModulePoolMT:_runInitFunc()
 			end
 		end
 
+		Promise.all(initPromises):await()
+
 		self._initialized = true
 		self._initializedSignal:Fire()
-
-		Promise.all(initPromises):await()
 
 		resolve(netStartMS)
 	end):andThen(function(netStartMS)
@@ -126,9 +126,8 @@ function ModulePoolMT:_runInitFunc()
 				print,
 				`Net Started ({DateTime.now().UnixTimestampMillis - netStartMS} milliseconds)`
 			)
+			self._started = true
 		end)
-
-		self._started = true
 	end)
 end
 

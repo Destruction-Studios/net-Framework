@@ -12,17 +12,8 @@ TablePropertyMT.__index = TablePropertyMT
 
 local properties: { [string]: TablePropertyClass } = {}
 
-local function getLengthOfDict(tbl: {})
-	local loopAmount = 0
-	for _, _ in tbl do
-		loopAmount += 1
-	end
-
-	return loopAmount
-end
-
 local function isDict(tbl)
-	local loopAmount = getLengthOfDict(tbl)
+	local loopAmount = Utils.getDictLength(tbl)
 
 	local amount = #tbl
 
@@ -36,14 +27,13 @@ local function isTableDifferent(old, new)
 	if (old == nil and new ~= nil) or (old ~= nil and new == nil) then
 		return true
 	end
-	if getLengthOfDict(new) ~= getLengthOfDict(old) then
+	if Utils.getDictLength(new) ~= Utils.getDictLength(old) then
 		return true
 	else
 		for k, v in new do
 			if old[k] ~= v then
 				return true
 			elseif typeof(v) == "table" then
-				print("TBL ", v, old[k], new[k])
 				if isTableDifferent(old[k], new[k]) then
 					return true
 				end
@@ -95,7 +85,7 @@ end
 function TablePropertyMT._fireIfChanged(self: TablePropertyClass, event: string, ...)
 	local isDifferent = isTableDifferent(self._lastValue, self._value)
 
-	self._lastValue = Utils.copy(self._value)
+	self._lastValue = Utils.copy(self._value, true)
 
 	if isDifferent then
 		self._remote:FireAllClients(event, self._value, ...)

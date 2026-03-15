@@ -20,6 +20,7 @@ end
 
 local Network = require(script.Network)
 local Flags = require(script.Parent.Flags)
+local Utils = require(script.Parent.Utils)
 
 NetServer.Network = Network
 NetServer.Flag = Flags
@@ -67,14 +68,6 @@ local function createInstance(parent, name, instanceType)
 	return inst
 end
 
-local function getDictLen(dict)
-	local result = 0
-	for _, _ in dict do
-		result += 1
-	end
-	return result
-end
-
 function NetServer:GetService(serviceName: string)
 	if modulePool:HasStartBeenCalled() == true and modulePool:HasInitialized() == false then
 		error(`Net:GetService() can not be called during _init functions`)
@@ -95,7 +88,7 @@ function NetServer:Service(service)
 	local newNetwork = {}
 	local newService = setmetatable(service, NetServiceMT)
 
-	if getDictLen(oldNetwork) > 0 then
+	if Utils.getDictLength(oldNetwork) > 0 then
 		local serviceNetworkFolder = Instance.new("Folder")
 		serviceNetworkFolder.Name = newService.Name
 		serviceNetworkFolder.Parent = networkFolder
@@ -179,37 +172,38 @@ end
 
 function NetServiceMT:GetEvent(eventName: string)
 	local networkObject = self.Network[eventName]
-	if networkObject.ClassName ~= "NetEvent" then
-		error(`{eventName} is not a Net Event ({networkObject.ClassName})`)
-	end
-
+	assert(networkObject, `Net Event '{eventName}' does not exist on Service '{self.Name}'`)
+	assert(networkObject.ClassName == "NetEvent", `'{eventName}' is not a Net Event, got '{networkObject.ClassName}'`)
 	return networkObject
 end
 
 function NetServiceMT:GetFunction(functionName: string)
 	local networkObject = self.Network[functionName]
-	if networkObject.ClassName ~= "NetFunction" then
-		error(`{functionName} is not a Net Function ({networkObject.ClassName})`)
-	end
-
+	assert(networkObject, `Net Function '{functionName}' does not exist on Service '{self.Name}'`)
+	assert(
+		networkObject.ClassName == "NetFunction",
+		`'{functionName}' is not a Net Function, got '{networkObject.ClassName}'`
+	)
 	return networkObject
 end
 
 function NetServiceMT:GetProperty(propertyName: string)
 	local networkObject = self.Network[propertyName]
-	if networkObject.ClassName ~= "NetProperty" then
-		error(`{propertyName} is not a Net Property ({networkObject.ClassName})`)
-	end
-
+	assert(networkObject, `Net Property '{propertyName}' does not exist on Service '{self.Name}'`)
+	assert(
+		networkObject.ClassName == "NetProperty",
+		`'{propertyName}' is not a Net Property, got '{networkObject.ClassName}'`
+	)
 	return networkObject
 end
 
 function NetServiceMT:GetTableProperty(propertyName: string)
 	local networkObject = self.Network[propertyName]
-	if networkObject.ClassName ~= "NetTableProperty" then
-		error(`{propertyName} is not a Net Table Property ({networkObject.ClassName})`)
-	end
-
+	assert(networkObject, `Net Table Property '{propertyName}' does not exist on Service '{self.Name}'`)
+	assert(
+		networkObject.ClassName == "NetTableProperty",
+		`'{propertyName}' is not a Net Table Property, got '{networkObject.ClassName}'`
+	)
 	return networkObject
 end
 
