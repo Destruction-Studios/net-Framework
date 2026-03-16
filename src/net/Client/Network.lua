@@ -67,14 +67,14 @@ function Network:Start()
 end
 
 function NetServiceMT:GetEvent(eventName: string)
-	local networkObject = self.Network[eventName]
+	local networkObject = self[eventName]
 	assert(networkObject, `Net Event '{eventName}' does not exist on Service '{self.Name}'`)
 	assert(networkObject.ClassName == "NetEvent", `'{eventName}' is not a Net Event, got '{networkObject.ClassName}'`)
 	return networkObject
 end
 
 function NetServiceMT:GetFunction(functionName: string)
-	local networkObject = self.Network[functionName]
+	local networkObject = self[functionName]
 	assert(networkObject, `Net Function '{functionName}' does not exist on Service '{self.Name}'`)
 	assert(
 		networkObject.ClassName == "NetFunction",
@@ -84,7 +84,7 @@ function NetServiceMT:GetFunction(functionName: string)
 end
 
 function NetServiceMT:GetProperty(propertyName: string)
-	local networkObject = self.Network[propertyName]
+	local networkObject = self[propertyName]
 	assert(networkObject, `Net Property '{propertyName}' does not exist on Service '{self.Name}'`)
 	assert(
 		networkObject.ClassName == "NetProperty",
@@ -94,7 +94,7 @@ function NetServiceMT:GetProperty(propertyName: string)
 end
 
 function NetServiceMT:GetTableProperty(propertyName: string)
-	local networkObject = self.Network[propertyName]
+	local networkObject = self[propertyName]
 	assert(networkObject, `Net Table Property '{propertyName}' does not exist on Service '{self.Name}'`)
 	assert(
 		networkObject.ClassName == "NetTableProperty",

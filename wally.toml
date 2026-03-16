@@ -1,6 +1,6 @@
 [package]
 name = "destruction-studios/net"
-version = "1.2.0"
+version = "1.2.1"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
